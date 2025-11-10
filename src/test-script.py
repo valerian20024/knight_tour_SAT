@@ -38,49 +38,52 @@ It saves the illustration in a dedicated folder.
 @param name: the name of the file to save. 
 """
 def rainbow_plot(solution, name):
-	solution_array = np.array(solution)
-	M, N = solution_array.shape
 
-	# Normalize step values for color mapping
-	steps = solution_array.flatten()
-	valid_steps = steps[steps >= 0]  # ignore -1 cells
-	if len(valid_steps) > 0:
-		vmin, vmax = valid_steps.min(), valid_steps.max()
-	else:
-		vmin, vmax = 0, 1  # fallback for no solution
+    print("rainbow: ", solution)
 
-	norm = pl.Normalize(vmin=vmin, vmax=vmax)
-	cmap = cm['turbo']
+    solution_array = np.array(solution)
+    M, N = solution_array.shape
 
-	# Building the color matrix
-	cell_colors = []
-	for i in range(M):
-		row = []
-		for j in range(N):
-			step = solution[i][j]
-			if step == -1:
-				row.append('lightgray')  # no solution
-			else:
-				rgba = cmap(norm(step))
-				row.append(rgba)  # RGBA tuple
-		cell_colors.append(row)
+    # Normalize step values for color mapping
+    steps = solution_array.flatten()
+    valid_steps = steps[steps >= 0]  # ignore -1 cells
+    if len(valid_steps) > 0:
+        vmin, vmax = valid_steps.min(), valid_steps.max()
+    else:
+        vmin, vmax = 0, 1  # fallback for no solution
 
-	fig = pl.figure(figsize=(N * 5.0 / M, 5))
-	ax = pl.gca()
-	chessboard = ax.table(
-		cellText=solution_array,
-		cellColours=cell_colors,
-		loc=(0,0),
-		cellLoc='center',
-		fontsize=15)
-	ax.set_xticks([])
-	ax.set_yticks([])
-	for i in range(M):
-		for j in range(N):
-			cell = chessboard[i, j]
-			cell.set_height(1.0 / M)
-			cell.set_width(1.0 / N)
-	pl.savefig(f"{name}.pdf")
+    norm = pl.Normalize(vmin=vmin, vmax=vmax)
+    cmap = cm['turbo']
+
+    # Building the color matrix
+    cell_colors = []
+    for i in range(M):
+        row = []
+        for j in range(N):
+            step = solution[i][j]
+            if step == -1:
+                row.append('lightgray')  # no solution
+            else:
+                rgba = cmap(norm(step))
+                row.append(rgba)  # RGBA tuple
+        cell_colors.append(row)
+
+    fig = pl.figure(figsize=(N * 5.0 / M, 5))
+    ax = pl.gca()
+    chessboard = ax.table(
+        cellText=solution_array,
+        cellColours=cell_colors,
+        loc=(0,0),
+        cellLoc='center',
+        fontsize=15)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for i in range(M):
+        for j in range(N):
+            cell = chessboard[i, j]
+            cell.set_height(1.0 / M)
+            cell.set_width(1.0 / N)
+    pl.savefig(f"{name}.pdf")
 
 """
 This function plots all solutions using a colormap.
@@ -89,10 +92,10 @@ This function plots all solutions using a colormap.
 @param name: the name of the file to save. 
 """
 def rainbow_plot_all(solutions, name):
-	index = 0
-	for solution in solutions:
-		rainbow_plot(solution, f"{name}_{index}")
-		index += 1
+    index = 0
+    for solution in solutions:
+        rainbow_plot(solution, f"{name}_{index}")
+        index += 1
 
 """
 This script generates many solutions and compares timing between the efficient 
@@ -108,10 +111,11 @@ def timing_test_script():
 
         start = time()
         solver, var = build_knight_tour(m, n, i0, j0, mode)
-        solution, _ = extract_solution(solver, m, n, m * n, var)
+        solution, res = extract_solution(solver, m, n, m * n, var)
         end = time()
 
-        rainbow_plot(solution, path)
+        if res: 
+            rainbow_plot(solution, path)
 
         return start, end
 
@@ -130,7 +134,7 @@ def timing_test_script():
                     
                     print(f"Test {m}x{n}@({i0}{j0})")
                     print(f"  sc: {time_sc}")
-                    print(f"  n : {time_n}")
+                    print(f"  n : {time_n}" + str(["BETTER" if time_n > time_sc else "Meh"]))
 
 
 if __name__ == '__main__':
