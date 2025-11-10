@@ -1,4 +1,5 @@
-from knight_tour import solve_knight_tour
+from knight_tour import *
+
 """
 The first question implementation. Solves the Knight's Tour problem.
 
@@ -15,15 +16,15 @@ value is set to -1.
 
 """
 def question1(M, N, i0, j0):
+    T = M * N
     
-    solution, solver, variables, res = solve_knight_tour(M, N, i0, j0)
+    solver, variables = build_knight_tour(M, N, i0, j0)
 
-    """
-    print("solutions one by one :")
-    for sol in solutions:
-        print(sol)
-    """
+    solution, res = extract_solution(solver, M, N, T, variables)
 
+    # !!!!!!!!!!!!!!!!!!!
+    # variables in not a list
+    # !!!!!!!!!!!!!!!!!!!
     return solution, solver, variables
 
 """
@@ -35,6 +36,7 @@ def question3():
     nb_sol = 0
     M = 3
     N = 4
+    T = M * N
 
     for i0 in range(M):
         for j0 in range(N):
