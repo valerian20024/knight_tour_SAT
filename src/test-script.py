@@ -117,24 +117,25 @@ def timing_test_script():
         if res: 
             rainbow_plot(solution, path)
 
-        return start, end
+        return start, end, res
 
-    M = [3, 4, 5, 6, 7]
+    M = [0, 3, 4, 5, 6, 7]
     N = M
 
     for m in M:
         for n in N:
             for i0 in range(m):
                 for j0 in range(n):
-                    start_n, end_n = test(m, n, i0, j0, 'n')
-                    start_sc, end_sc = test(m, n, i0, j0, 'sc')
+                    start_n, end_n, res_n = test(m, n, i0, j0, 'n')
+                    start_sc, end_sc, res_sc = test(m, n, i0, j0, 'sc')
                     
                     time_sc = end_sc - start_sc
                     time_n = end_n - start_n
                     
-                    print(f"Test {m}x{n}@({i0}{j0})")
-                    print(f"  sc: {time_sc}")
-                    print(f"  n : {time_n}" + str(["BETTER" if time_n > time_sc else "Meh"]))
+                    print(f"Test {m}x{n}@({i0},{j0})")
+                    print(f"  sc: {time_sc}, {res_sc}")
+                    print(f"  n : {time_n}, {res_n}")
+                    print(f"  BETTER" if time_n > time_sc and res_n and res_sc else "  Meh")
 
 
 if __name__ == '__main__':
