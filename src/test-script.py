@@ -38,9 +38,6 @@ It saves the illustration in a dedicated folder.
 @param name: the name of the file to save. 
 """
 def rainbow_plot(solution, name):
-
-    print("rainbow: ", solution)
-
     solution_array = np.array(solution)
     M, N = solution_array.shape
 
@@ -124,19 +121,21 @@ def timing_test_script():
 
     for m in M:
         for n in N:
-            for i0 in range(m):
-                for j0 in range(n):
-                    start_n, end_n, res_n = test(m, n, i0, j0, 'n')
-                    start_sc, end_sc, res_sc = test(m, n, i0, j0, 'sc')
-                    
-                    time_sc = end_sc - start_sc
-                    time_n = end_n - start_n
-                    
-                    print(f"Test {m}x{n}@({i0},{j0})")
-                    print(f"  sc: {time_sc}, {res_sc}")
-                    print(f"  n : {time_n}, {res_n}")
-                    print(f"  BETTER" if time_n > time_sc and res_n and res_sc else "  Meh")
-
+            if m <= n:  # avoid to repeat 3x7 and 7x3 solutions
+                for i0 in range(m):
+                    for j0 in range(n):
+                        start_n, end_n, res_n = test(m, n, i0, j0, 'n')
+                        start_sc, end_sc, res_sc = test(m, n, i0, j0, 'sc')
+                        
+                        time_sc = end_sc - start_sc
+                        time_n = end_n - start_n
+                        
+                        print(f"Test {m}x{n}@({i0},{j0})")
+                        print(f"  sc: {time_sc}, {res_sc}")
+                        print(f"  n : {time_n}, {res_n}")
+                        print(f"  BETTER" if time_n > time_sc and res_n and res_sc else "  Meh")
+                        
+                        
 
 if __name__ == '__main__':
 
@@ -144,7 +143,9 @@ if __name__ == '__main__':
     #rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
     #rainbow_plot_all(st.question1(3, 4, 0, 0)[0], "figs/test/testrainbowplotall") # plotting all solutions
 
-    timing_test_script()
+    #timing_test_script()
+
+    rainbow_plot(st.question1(3, 3, 1, 1)[0], "figs/manual/test_3x3@(1, 1)")
 
     #plot_solution(st.question1(5, 5, 0, 0)[0]) # there should be a solution
     #plot_solution(st.question1(3, 7, 0, 0)[0]) # there should be a solution

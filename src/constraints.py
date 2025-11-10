@@ -24,14 +24,17 @@ def add_legal_moves_constraints(solver, M, N, T, var):
         for i in range(M):
             for j in range(N):
                 v = var[(i, j, t)]
+                print(f"¬{v} ({i}, {j}| {t})")
                 move_lits = []
                 for di, dj in KNIGHT_MOVES:
                     ni, nj = i + di, j + dj
                     # Check move leads inside the chessboard
                     if valid_pos(ni, nj, M, N):
                         move_lits.append(var[(ni, nj, t + 1)])
+                        print(f"Appending ({ni}, {nj}| {t + 1})")
                 if move_lits:
                     # v => legal moves <=> not v and (ORing legal_moves)
+                    print(f"move_lits ", move_lits)
                     solver.add_clause([-v] + move_lits)
     return solver, var
 

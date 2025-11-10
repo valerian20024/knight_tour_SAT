@@ -21,6 +21,9 @@ def question1(M, N, i0, j0):
     solver, variables = build_knight_tour(M, N, i0, j0)
 
     solution, _ = extract_solution(solver, M, N, T, variables)
+
+    print(f"variables: {variables}")
+    print(f"solution: {solution}")
     
     return solution, solver, list(variables.values())
 

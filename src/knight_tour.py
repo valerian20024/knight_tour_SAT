@@ -9,11 +9,12 @@ def extract_solution(solver, M, N, T, var):
         #print("Solution found")
         res = True
         model = solver.get_model()  # list of all the variables
+        #print(f"model : {model}")
         solution = model_to_solution(model, M, N, T, var)
 
     return solution, res
 
-""""""
+
 def extract_all_solutions(solver, M, N, T, var):
     res = False
     solutions = []
