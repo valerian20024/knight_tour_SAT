@@ -50,7 +50,7 @@ This function will solve the Knight's Tour problem.
 
 
 """
-def build_knight_tour(M, N, i0, j0, mode='n', solutions='one'):
+def build_knight_tour(M, N, i0, j0, mode='n'):
     print(f"solve_knight_tour: {M}x{N}@({i0}, {j0}) in {mode} mode")
     solver = Glucose3()
     

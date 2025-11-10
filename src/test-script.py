@@ -138,7 +138,7 @@ def timing_test_script():
 if __name__ == '__main__':
 
     # Question 1
-    rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
+    #rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
     #rainbow_plot_all(st.question1(3, 4, 0, 0)[0], "figs/test/testrainbowplotall") # plotting all solutions
 
     #timing_test_script()
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     #plot_solution(st.question1(8, 8, 0, 0)[0])
 
     # Question 3
-    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
     #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))

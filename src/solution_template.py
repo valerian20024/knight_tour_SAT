@@ -20,7 +20,7 @@ def question1(M, N, i0, j0):
     
     solver, variables = build_knight_tour(M, N, i0, j0)
 
-    solution, res = extract_solution(solver, M, N, T, variables)
+    solution, _ = extract_solution(solver, M, N, T, variables)
 
     # !!!!!!!!!!!!!!!!!!!
     # variables in not a list
@@ -33,18 +33,17 @@ The third question implementation.
 @return nb_sol: The number of solutions for a given instance of the problem.
 """
 def question3():
-    nb_sol = 0
     M = 3
     N = 4
     T = M * N
 
+    nb_sol = 0
     for i0 in range(M):
         for j0 in range(N):
-            res = question1(M, N, i0, j0)[1]
-            for m in res.enum_models():
-                print("model ", m)
-                nb_sol += 1
-
+            solver, variables = build_knight_tour(M, N, i0, j0)
+            solutions, _ = extract_all_solutions(solver, M, N, T, variables)
+            nb_sol += len(solutions)
+    
     return nb_sol
 
 
