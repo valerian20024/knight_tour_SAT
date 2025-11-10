@@ -21,11 +21,8 @@ def question1(M, N, i0, j0):
     solver, variables = build_knight_tour(M, N, i0, j0)
 
     solution, _ = extract_solution(solver, M, N, T, variables)
-
-    # !!!!!!!!!!!!!!!!!!!
-    # variables in not a list
-    # !!!!!!!!!!!!!!!!!!!
-    return solution, solver, variables
+    
+    return solution, solver, list(variables.values())
 
 """
 The third question implementation.
@@ -43,6 +40,7 @@ def question3():
             solver, variables = build_knight_tour(M, N, i0, j0)
             solutions, _ = extract_all_solutions(solver, M, N, T, variables)
             nb_sol += len(solutions)
+            print("Number of solutions", len(solutions))
     
     return nb_sol
 

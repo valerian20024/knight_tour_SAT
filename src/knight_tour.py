@@ -4,22 +4,26 @@ from constraints import *
 
 def extract_solution(solver, M, N, T, var):
     res = False
+    solution = None
     if solver.solve():
-        print("Solution found")
+        #print("Solution found")
         res = True
         model = solver.get_model()  # list of all the variables
         solution = model_to_solution(model, M, N, T, var)
 
     return solution, res
 
+""""""
 def extract_all_solutions(solver, M, N, T, var):
     res = False
     solutions = []
     if solver.solve():
+        #print("Solution found")
         res = True
         for model in solver.enum_models():  # list of all the variables
             solution = model_to_solution(model, M, N, T, var)
             solutions.append(solution)
+            
     return solutions, res
 
 """Helper function to convert a SAT model into a solution matrix."""

@@ -34,7 +34,7 @@ This function plots a solution using a colormap that represents
 in a clear way the progression of the knight on the chessboard.
 It saves the illustration in a dedicated folder.
 
-@param solution: the solution to display.
+@param solution: list of list. The solution to display.
 @param name: the name of the file to save. 
 """
 def rainbow_plot(solution, name):
@@ -82,6 +82,12 @@ def rainbow_plot(solution, name):
 			cell.set_width(1.0 / N)
 	pl.savefig(f"{name}.pdf")
 
+"""
+This function plots all solutions using a colormap.
+
+@param solution: A list of solutions. The solutions to display.
+@param name: the name of the file to save. 
+"""
 def rainbow_plot_all(solutions, name):
 	index = 0
 	for solution in solutions:
@@ -93,6 +99,22 @@ This script generates many solutions and compares timing between the efficient
 and naive solutions.
 """
 def timing_test_script():
+
+    def test(m, n, i0, j0, mode):
+        dir_path = f"figs/test/{mode}/{m}x{n}/"
+        filename = f"{i0}_{j0}"
+        path = dir_path + filename
+        os.makedirs(dir_path, exist_ok=True)
+
+        start = time()
+        solver, var = build_knight_tour(m, n, i0, j0, mode)
+        solution, _ = extract_solution(solver, m, n, m * n, var)
+        end = time()
+
+        rainbow_plot(solution, path)
+
+        return start, end
+
     M = [3, 4, 5, 6, 7]
     N = M
 
@@ -100,40 +122,16 @@ def timing_test_script():
         for n in N:
             for i0 in range(m):
                 for j0 in range(n):
-                    mode = 'n'
-                    dir_path = f"figs/test/{mode}/{m}x{n}/"
-                    filename = f"{i0}_{j0}"
-                    path = dir_path + filename
-                    os.makedirs(dir_path, exist_ok=True)
+                    start_n, end_n = test(m, n, i0, j0, 'n')
+                    start_sc, end_sc = test(m, n, i0, j0, 'sc')
                     
-                    start_n = time()
-                    solution, solver, variables, res = build_knight_tour(m, n, i0, j0, mode)
-                    end_n = time()
-                    rainbow_plot(solution, path)
-
-                    time_n = end_n - start_n
-                    print(f"Time for {m}x{n}@({i0},{j0}), mode: {mode} {time_n:.5f}")
-
-                    
-                    mode = 'sc'
-                    dir_path = f"figs/test/{mode}/{m}x{n}/"
-                    filename = f"{i0}_{j0}"
-                    path = dir_path + filename
-                    os.makedirs(dir_path, exist_ok=True)
-
-                    start_sc = time()
-                    solution, solver, variables, res = build_knight_tour(m, n, i0, j0, mode)
-                    end_sc = time()
-                    rainbow_plot(solution, path)
-
                     time_sc = end_sc - start_sc
-                    print(f"Time for {m}x{n}@({i0}{j0}), mode: {mode} {time_sc:.5f}")
+                    time_n = end_n - start_n
+                    
+                    print(f"Test {m}x{n}@({i0}{j0})")
+                    print(f"  sc: {time_sc}")
+                    print(f"  n : {time_n}")
 
-                    if time_sc <= time_n:
-                        print("     ALLELUIAAA")
-                    print("----------------------")
-                    
-                    
 
 if __name__ == '__main__':
 
@@ -141,7 +139,7 @@ if __name__ == '__main__':
     #rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
     #rainbow_plot_all(st.question1(3, 4, 0, 0)[0], "figs/test/testrainbowplotall") # plotting all solutions
 
-    #timing_test_script()
+    timing_test_script()
 
     #plot_solution(st.question1(5, 5, 0, 0)[0]) # there should be a solution
     #plot_solution(st.question1(3, 7, 0, 0)[0]) # there should be a solution
@@ -152,7 +150,7 @@ if __name__ == '__main__':
     #plot_solution(st.question1(8, 8, 0, 0)[0])
 
     # Question 3
-    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
     #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
