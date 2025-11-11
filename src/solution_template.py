@@ -22,7 +22,7 @@ def question1(M, N, i0, j0):
 
     solution, _ = extract_solution(solver, M, N, T, variables)
 
-    print(f"variables: {variables}")
+    #print(f"variables: {variables}")
     print(f"solution: {solution}")
     
     return solution, solver, list(variables.values())
@@ -49,8 +49,8 @@ def question3():
 
 
 """
-The fourth question implementation. Counts the number of solutions up to symmetry. Two solutions are identical if one can be obtained by applying
-a symmetry to the other.
+The fourth question implementation. Counts the number of solutions up to symmetry. 
+Two solutions are identical if one can be obtained by applying a symmetry to the other.
 
 @return nb_sol: The number of solutions up to symmetry of the problem.
 """

@@ -116,7 +116,7 @@ def timing_test_script():
 
         return start, end, res
 
-    M = [0, 3, 4, 5, 6, 7]
+    M = [0, 1, 2, 3, 4, 5, 6, 7]
     N = M
 
     for m in M:
@@ -143,9 +143,9 @@ if __name__ == '__main__':
     #rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
     #rainbow_plot_all(st.question1(3, 4, 0, 0)[0], "figs/test/testrainbowplotall") # plotting all solutions
 
-    #timing_test_script()
+    timing_test_script()
 
-    rainbow_plot(st.question1(3, 3, 1, 1)[0], "figs/manual/test_3x3@(1, 1)")
+    #rainbow_plot(st.question1(3, 3, 1, 1)[0], "figs/manual/test_3x3@(1, 1)")
 
     #plot_solution(st.question1(5, 5, 0, 0)[0]) # there should be a solution
     #plot_solution(st.question1(3, 7, 0, 0)[0]) # there should be a solution
