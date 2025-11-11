@@ -36,6 +36,26 @@ def add_legal_moves_constraints(solver, M, N, T, var):
                     # v => legal moves <=> not v and (ORing legal_moves)
                     #print(f"move_lits ", move_lits)
                     solver.add_clause([-v] + move_lits)
+                else:
+                    solver.add_clause([-v])
+    
+    # Reverse constraints: Ensure t+1 position is reachable from t
+    for t in range(T - 1):
+        for i in range(M):
+            for j in range(N):
+                v = var[(i, j, t + 1)]
+                prev_lits = []
+                for di, dj in KNIGHT_MOVES:
+                    pi, pj = i - di, j - dj
+                    if valid_pos(pi, pj, M, N):
+                        prev_lits.append(var[(pi, pj, t)])
+                if prev_lits:
+                    # If at (i,j) at t+1, must come from a legal position at t
+                    solver.add_clause([-v] + prev_lits)
+                else:
+                    # No position at t can reach (i,j), cannot be here at t+1
+                    solver.add_clause([-v])
+    
     return solver, var
 
 
