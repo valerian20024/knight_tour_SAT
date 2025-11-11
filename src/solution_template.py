@@ -1,4 +1,6 @@
 from knight_tour import *
+from symmetry import count_solutions_up_to_symmetry
+from plot import rainbow_plot
 
 """
 The first question implementation. Solves the Knight's Tour problem.
@@ -42,6 +44,11 @@ def question3():
         for j0 in range(N):
             solver, variables = build_knight_tour(M, N, i0, j0)
             solutions, _ = extract_all_solutions(solver, M, N, T, variables)
+            for sol in solutions:
+                print("sol")
+                for row in sol:
+                    print(f"{row}")
+
             nb_sol += len(solutions)
             print("Number of solutions", len(solutions))
     
@@ -55,9 +62,24 @@ Two solutions are identical if one can be obtained by applying a symmetry to the
 @return nb_sol: The number of solutions up to symmetry of the problem.
 """
 def question4():
+    M = 3
+    N = 4
+    T = M * N
+    
     nb_sol = 0
-
-    # YOUR CODE HERE
+    for i0 in range(M):
+        for j0 in range(N):
+            solver, variables = build_knight_tour(M, N, i0, j0)
+            solutions, _ = extract_all_solutions(solver, M, N, T, variables)
+            index = 0        
+            for sol in solutions:
+                rainbow_plot(sol, f"3x4_{index}")
+                index += 1
+                print("sol")
+                for row in sol:
+                    print(f"{row}")
+            nb_sol += count_solutions_up_to_symmetry(solutions, M, N)
+            print("Number of solutions so far", nb_sol)
 
     return nb_sol
 
