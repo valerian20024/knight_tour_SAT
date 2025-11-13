@@ -1,92 +1,100 @@
-\documentclass{article}
+\documentclass[a4paper, 11pt]{article}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[utf8]{inputenc}
 
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
 
-\title{test_offline}
-\author{wislez.valerian }
+\title{knight_tour_SAT}
+\author{wislez.valerian}
 \date{November 2025}
 
 \begin{document}
-
-
 \begin{titlepage}
-	\centering
+    \centering
     % --- Logo --- 
     \includegraphics[width=\textwidth]{img/uliege_fsa.png} \\[1 cm]
 
     % --- Header ---
-	\textsc{\Large INFO9015-1 - Logic for Computer Science} \\[0.4 cm]
+    \textsc{\Large INFO9015-1 - Logic for Computer Science} \\[0.4 cm]
 
     % --- Title ---
-	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
-	{\Large \bfseries Project - Knight's Tour SAT solving} \\
-	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
+    \rule{\linewidth}{0.2 mm} \\[0.4 cm]
+    {\Large \bfseries Project Report - Knight's Tour SAT solving}
+    \rule{\linewidth}{0.2 mm} \\[1.5 cm]
 
     % --- Minipage ---
-	\begin{minipage}[t]{0.49\textwidth}
-		\begin{flushleft} \large
-		\textbf{Teacher:} \\
-            Pascal Fontaine \\[0.5 cm]
+    \begin{minipage}[t]{0.49\textwidth}
+        \begin{flushleft} \large
+            \textbf{Teacher:} \\
+                Pascal Fontaine \\[0.5 cm]
             \textbf{Teaching Assistant:} \\
-            Tom Clara \\  
-		\end{flushleft}
-	\end{minipage}
+                Tom Clara   
+        \end{flushleft}
+    \end{minipage}
     \hfill 
-	\begin{minipage}[t]{0.49\textwidth}
-		\begin{flushright} \large
-        \textbf{Author:} \\
-            Valérian Wislez s200825 
-		\end{flushright}
-	\end{minipage}
+    \begin{minipage}[t]{0.49\textwidth}
+        \begin{flushright} \large
+            \textbf{Author:} \\
+                Valérian Wislez s200825 
+        \end{flushright}
+    \end{minipage}
     
     \vfill	
-    \textsc{\Large Academic Year 2025-2026} \\[1.0 cm]	
+    \textsc{\Large Academic Year 2025-2026}
 \end{titlepage}
 
+\section{Introduction}
+
+This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at \cite{knight_tour_github}.
 
 \section{Naive solution}
 The first attempt at solving the problem involves the following set of constraints:
 
 \begin{enumerate}
-	\item One timestep
-	\item One cell
-	\item Legal moves
+    \item One timestep
+    \item One cell
+    \item Legal moves
 \end{enumerate}
+
+This is implemented in \texttt{}
 
 \section{Efficient solution}
 While the naive solution works well in general, for boards ranging up to ... x ... it has a quadratic number of constraints for encoding the one cell and one time only.
 A more efficient solution would benefit of having less constraints for reducing the search space of the solver.
-After soing some research, I gathered information about many encodings \footnote{Le papier 2013} for the "at-most-one" family of constraints, refined to "exactly one" encoding in the case of this problem. 
+After soing some research, I gathered information about many encodings \cite{hoos2007sat} for the "at-most-one" family of constraints, refined to "exactly one" encoding in the case of this problem. 
 It appears my initial encoding is actually known as "pairwise encoding".
 The sequential counter seemed to be the most effective encoding.
 The sequential counter works by assigning a set of new, auxiliary variables, whose size grows \textit{linearly} with the size of the problem.
 
 This technique can be applied to both the one cell only and one timestep only constraints. 
 
-However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by \cite{}
+However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by \cite{hoos2007sat}
 Indeed, because of ... 
 
+This is implemented in \texttt{}
 
 
 \section{Counting solutions}
 In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models()} method after solving the problem and simply count them.
 
-Comparing the results obtained when solving $3 \times 4$ as well as $5 \time 5$ chessboards with the ones showed in \cite{wiki}
+Comparing the results obtained when solving $3 \times 4$ as well as $5 \time 5$ chessboards with the ones showed in \cite{wikipedia_knights_tour}
+
+This is implemented in \texttt{}
 
 \section{Counting up to symmetry}
 The easiest way to count up to symmetry was to enumerate all the solutions, apply symmetries and check whether or not the solution is identical to another solution. 
 
 This is implemented in \texttt{}
 
-
 \section{Finding additional constraints}
 
-\pagebreak
-\section*{References}
-
-\url{https://fr.wikipedia.org/wiki/Probl%C3%A8me_du_cavalier#D%C3%A9nombrement_des_solutions}
-
-\url{https://sat.inesc-id.pt/~ines/publications/cp07.pdf}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}

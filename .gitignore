@@ -218,3 +218,5 @@ src/figs/test/
 *.fls
 *.synctex.*
 *.out
+*.bbl
+*.blg
