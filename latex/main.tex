@@ -21,11 +21,11 @@
     \includegraphics[width=\textwidth]{img/uliege_fsa.png} \\[1 cm]
 
     % --- Header ---
-    \textsc{\Large INFO9015-1 - Logic for Computer Science} \\[0.4 cm]
+    \textsc{\Large INFO9015--1 Logic for Computer Science} \\[0.4 cm]
 
     % --- Title ---
     \rule{\linewidth}{0.2 mm} \\[0.4 cm]
-    {\Large \bfseries Project Report - Knight's Tour SAT solving}
+    {\Large \bfseries Project Report --- Knight's Tour SAT solving}
     \rule{\linewidth}{0.2 mm} \\[1.5 cm]
 
     % --- Minipage ---
@@ -34,7 +34,7 @@
             \textbf{Teacher:} \\
                 Pascal Fontaine \\[0.5 cm]
             \textbf{Teaching Assistant:} \\
-                Tom Clara   
+                Tom Clara
         \end{flushleft}
     \end{minipage}
     \hfill 
@@ -46,44 +46,45 @@
     \end{minipage}
     
     \vfill	
-    \textsc{\Large Academic Year 2025-2026}
+    \textsc{\Large Academic Year 2025--2026}
 \end{titlepage}
 
 \section{Introduction}
 
-This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at \cite{knight_tour_github}.
+This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at~\cite{knight_tour_github}.
 
 \section{Naive solution}
 The first attempt at solving the problem involves the following set of constraints:
 
 \begin{enumerate}
-    \item One timestep
-    \item One cell
-    \item Legal moves
+    \item A cell can only be occupied at one timestep.\footnote{To ensure only one constraint, one can simply ensure ``at most one'' and ``at least one''.}
+    \item For a given timestep, the knight can only occupy one cell.
+    \item Legal moves of the knight restrict its movement. Formally,
+    \[wearere \]
 \end{enumerate}
 
-This is implemented in \texttt{}
+This first version is able to solve 
+
+%The constraints are implemented in \texttt{add\_legal\_moves\_constraints}, \texttt{add\_cell\_constraints\_naive}, \texttt{add\_time\_constraints\_naive}, \texttt{add\_cell\_constraints\_sequential\_counter}, \texttt{add\_time\_constraints\_sequential\_counter}.
 
 \section{Efficient solution}
-While the naive solution works well in general, for boards ranging up to ... x ... it has a quadratic number of constraints for encoding the one cell and one time only.
+While the naive solution works well in general, for boards ranging up to \ldots x \ldots it has a quadratic number of constraints for encoding the one cell and one time only.
 A more efficient solution would benefit of having less constraints for reducing the search space of the solver.
-After soing some research, I gathered information about many encodings \cite{hoos2007sat} for the "at-most-one" family of constraints, refined to "exactly one" encoding in the case of this problem. 
-It appears my initial encoding is actually known as "pairwise encoding".
-The sequential counter seemed to be the most effective encoding.
+After doing some research about different encodings~\cite{hoos2007sat} for the ``at-most-one'' family of constraints (refined to ``exactly one'' in this problem), it appeared the naive encoding is actually known as ``pairwise encoding'', and the sequential counter seems to be the one most effective encodings there is.
 The sequential counter works by assigning a set of new, auxiliary variables, whose size grows \textit{linearly} with the size of the problem.
 
 This technique can be applied to both the one cell only and one timestep only constraints. 
 
-However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by \cite{hoos2007sat}
-Indeed, because of ... 
+However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by~\cite{hoos2007sat}
+Indeed, because of  
 
 This is implemented in \texttt{}
 
 
 \section{Counting solutions}
-In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models()} method after solving the problem and simply count them.
+In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models} method after solving the problem and simply count them.
 
-Comparing the results obtained when solving $3 \times 4$ as well as $5 \time 5$ chessboards with the ones showed in \cite{wikipedia_knights_tour}
+Comparing the results obtained when solving $3 \times 4$ as well as $5 \time 5$ chessboards with the ones showed in~\cite{wikipedia_knights_tour}
 
 This is implemented in \texttt{}
 

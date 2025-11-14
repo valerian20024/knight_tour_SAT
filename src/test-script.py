@@ -64,12 +64,24 @@ if __name__ == '__main__':
 
     # Question 2
     #plot_solution(st.question1(8, 8, 0, 0)[0])
+    start = time()
+    sol = st.question1(8, 8, 0, 0)[0]
+    end = time()
+    print(f"end - start = {end - start}")
+    
+    start = time()
+    plot_solution(sol)
+    end = time()
+    print(f"   end - start = {end - start}")
+
+    
+    
 
     # Question 3
     #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
-    print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
+    #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
 
     # Question 5
     #print(st.question5(4, 4, 0, 0)) # should be the empty list
