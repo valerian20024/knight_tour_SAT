@@ -24,7 +24,7 @@ def add_legal_moves_constraints(solver, M, N, T, var):
         for i in range(M):
             for j in range(N):
                 v = var[(i, j, t)]
-                #print(f"¬{v} ({i}, {j}| {t})")
+                #print(f"!{v} ({i}, {j}| {t})")
                 move_lits = []
                 for di, dj in KNIGHT_MOVES:
                     ni, nj = i + di, j + dj
@@ -152,7 +152,7 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
         
         # Case 2: 1x2 or 2x1 board (n = 2)
         if n == 2:
-            # Exactly one: (X_0 ∨ X_1) ∧ (¬X_0 ∨ ¬X_1)
+            # Exactly one: (X_0 v X_1) ^ (!X_0 v !X_1)
             solver.add_clause([-lits[0], -lits[1]])  # At most one
             continue
 
@@ -162,12 +162,12 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
             aux.append(var_id)
             var_id += 1
         
-        solver.add_clause([-lits[0], aux[0]])               # First: ¬X_0 ∨ a_0
+        solver.add_clause([-lits[0], aux[0]])               # First: !X_0 v a_0
         for l in range(1, n - 1):
-            solver.add_clause([-lits[l], aux[l]])           # ¬X_i ∨ a_i
-            solver.add_clause([-aux[l - 1], aux[l]])        # ¬a_{i-1} ∨ a_i
-            solver.add_clause([-lits[l], -aux[l - 1]])      # ¬X_i ∨ ¬a_{i-1}
-        solver.add_clause([-lits[-1], -aux[-2]])            # Last: ¬X_{n-1} ∨ ¬a_{n-2}
+            solver.add_clause([-lits[l], aux[l]])           #/ !X_i v a_i
+            solver.add_clause([-aux[l - 1], aux[l]])        #/ !a_{i-1} v a_i
+            solver.add_clause([-lits[l], -aux[l - 1]])      #/ !X_i v !a_{i-1}
+        solver.add_clause([-lits[-1], -aux[-2]])            #/ Last: !X_{n-1} v !a_{n-2}
         
     return solver, var, var_id
 
@@ -201,7 +201,7 @@ def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
             
             # Case 2: T = 2 (n = 2)
             if n == 2:
-                # Exactly one: (X_0 ∨ X_1) ∧ (¬X_0 ∨ ¬X_1)
+                # Exactly one: (X_0 v X_1) ∧ (!X_0 v !X_1)
                 solver.add_clause([-lits[0], -lits[1]])  # At most one
                 continue
 
@@ -213,11 +213,11 @@ def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
 
             #print(f"aux = {aux}")
 
-            solver.add_clause([-lits[0], aux[0]])               # First: ¬X_0 ∨ a_0
+            solver.add_clause([-lits[0], aux[0]])               # First: !X_0 v a_0
             for l in range(1, n - 1):
-                solver.add_clause([-lits[l], aux[l]])           # ¬X_i ∨ a_i
-                solver.add_clause([-aux[l - 1], aux[l]])        # ¬a_{i-1} ∨ a_i
-                solver.add_clause([-lits[l], -aux[l - 1]])      # ¬X_i ∨ ¬a_{i-1}
-            solver.add_clause([-lits[-1], -aux[-2]])            # Last: ¬X_{n-1} ∨ ¬a_{n-2}
+                solver.add_clause([-lits[l], aux[l]])           #/ !X_i v a_i
+                solver.add_clause([-aux[l - 1], aux[l]])        #/ !a_{i-1} v a_i
+                solver.add_clause([-lits[l], -aux[l - 1]])      #/ !X_i v !a_{i-1}
+            solver.add_clause([-lits[-1], -aux[-2]])            # Last: !X_{n-1} v !a_{n-2}
             
     return solver, var, var_id
