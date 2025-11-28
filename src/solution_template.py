@@ -1,6 +1,7 @@
 from knight_tour import *
 from symmetry import count_solutions_up_to_symmetry
 from plot import rainbow_plot
+from q5 import *
 
 """
 The first question implementation. Solves the Knight's Tour problem.
@@ -97,9 +98,7 @@ of the solution. They enforce the knight to visit a specific cell at a specific 
 no solution exists, it returns an empty list.
 """
 def question5(M, N, i0, j0):
-    constraints = []
-
-    # YOUR CODE HERE
+    constraints = q5(M, N, i0, j0)
 
     return constraints
 
