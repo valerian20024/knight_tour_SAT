@@ -99,36 +99,32 @@ of the solution. They enforce the knight to visit a specific cell at a specific 
 no solution exists, it returns an empty list.
 """
 def question5(M, N, i0, j0):
-    print("=" * 20)
-    print("TESTING QUESTION 5")
-    print("=" * 20)
-
     T = M * N
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
     base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
 
-    print("=" * 20)
-    print("SOLUTIONS BASE")
-    print("=" * 20)
+    print("=" * 20 + "\nSOLUTIONS BASE\n" + "=" * 20)
 
     for sol in base_solutions:
-        print(f"{sol}")
+        print(f"  {sol}")
+    print(f"  => number of solutions BASE : {len(base_solutions)}")
 
-    print(f"number of solutions BASE : {len(base_solutions)}")
 
-    print("=" * 30)
-    print("TEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL")
-    print("=" * 30)
 
-    # fully constrained version of the problem
-    solver_constraints, vars_constraints = build_knight_tour(M, N, i0, j0, mode='sc')
+
+    print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
+
+    solver_constrained, vars_constrained = build_knight_tour(M, N, i0, j0, mode='sc')
     constraints = question5_fair(M, N, i0, j0)
-    print(f"constraints: {constraints}")
+    print(f"  constraints: {constraints}")
 
-    for c in constraints:
-        solver_constraints.add_clause([vars_constraints[c]])
+    """for c in constraints:
+        solver_constrained.add_clause([vars_constrained[c]])
 
-    constraints_solutions, _ = extract_all_solutions(solver_constraints, M, N, T, vars_constraints)
+    constraints_solutions, _ = extract_all_solutions(solver_constrained, M, N, T, vars_constrained)
+    """
+
+    constraints_solutions = solve_with_constraints(constraints, M, N, i0, j0)
 
     for sol in constraints_solutions:
         print(f"{sol} {hash(str(sol))}")
@@ -136,16 +132,16 @@ def question5(M, N, i0, j0):
     print(f"number of solutions FULL ADDITIONAL CONSTRAINTS : {len(constraints_solutions)}")
 
 
-    print("=" * 30)
-    print("TEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS")
-    print("=" * 30)
 
+
+    print("=" * 30 + "\nTEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS\n" + "=" * 30)
     subsets = leave_one_out_subsets(constraints)
     
     print(f"subsets: {subsets}")
     for subset in subsets:
         print(f"  {subset}")
         solutions = solve_with_constraints(subset, M, N, i0, j0)
+        print(f"  number of solutions with subset {subset} is {len(solutions)}")
         for sol in solutions:
             print(f"    solution: {sol} {hash(str(sol))}")
 

@@ -9,7 +9,7 @@ def question5_fair(M, N, i0, j0):
     solutions, has_sol = extract_all_solutions(solver, M, N, T, variables)
 
     if not has_sol or len(solutions) <= 1:
-        #print("NO SOLUTION")
+        print("NO SOLUTION")
         return []
 
     
@@ -24,22 +24,21 @@ def question5_fair(M, N, i0, j0):
         paths.add(tuple(path))
     paths = tuple(paths)  # to be able to index it
 
-    """
-    #print(f"\nPaths:")
+    print(f"\nPaths:")
     for p in paths:
-        #print(f"           {p[0:12]} {hash(p)}")
-        #print()
-    """
+        print(f"           {p[0:12]} {hash(p)}")
+        print()
     
-    # The choosen path to which the others will be compared to
+    
+    # The chosen path to which the others will be compared
     ref_path = random.choice(paths)
     constraints = set()
     
     # Eliminating every other solution
     for alt_path in paths:
         if alt_path is not ref_path:  # don't kill the chosen one
-            #print(f"ref path : {ref_path} {hash(ref_path)}")
-            #print(f"alt path : {alt_path} {hash(alt_path)}")
+            print(f"ref path : {ref_path} {hash(ref_path)}")
+            print(f"alt path : {alt_path} {hash(alt_path)}")
 
             # Check whether this alternative already violates one of the constraints
             blocked = False
@@ -55,9 +54,10 @@ def question5_fair(M, N, i0, j0):
                 if alt_path[t] != ref_path[t]:
                     print(f"    alt_path[{t}] != ref_path[{t}] ==> {alt_path[t]} != {ref_path[t]}")
                     i, j = ref_path[t]         # force the reference position
-                    print(f"    Constraint : (t: i, j) = ({t}: {i}, {j})")
-                    constraints.add((i, j, t))
+                    print(f"    Adding constraint : (t: i, j) = ({t}: {i}, {j})")
+                    constraints.add((t, i, j))
                     break
-        #print(f"constraints:\n  {constraints}")
-
+        print(f"constraints:\n  {constraints}")
+    # swapping back to normal i, j, t indexing
+    constraints = [(i, j, t) for (t, i, j) in constraints]
     return list(constraints)
