@@ -2,6 +2,7 @@ from knight_tour import *
 from symmetry import count_solutions_up_to_symmetry
 from plot import rainbow_plot
 from q5 import *
+import numpy
 
 """
 The first question implementation. Solves the Knight's Tour problem.
@@ -105,14 +106,15 @@ def question5(M, N, i0, j0):
     T = M * N
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
     base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
-    
+
+
 
     print("=" * 20)
     print("SOLUTIONS BASE")
     print("=" * 20)
 
     for sol in base_solutions:
-        print(sol)
+        print(f"{sol} {hash(str(sol))}")
 
     print("=" * 20)
     print("CONSTRAINTS")
@@ -131,7 +133,7 @@ def question5(M, N, i0, j0):
     print("=" * 20)
 
     for sol in constraints_solutions:
-        print(sol)
+        print(f"{sol} {hash(str(sol))}")
 
     return constraints
 
