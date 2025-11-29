@@ -86,5 +86,5 @@ if __name__ == '__main__':
 
     # Question 5
     #print(st.question5(4, 4, 0, 0)) # should be the empty list
-    #print(st.question5(3, 4, 1, 3))
-    print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
+    print(st.question5(3, 4, 1, 3))
+    #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call

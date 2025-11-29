@@ -98,7 +98,7 @@ of the solution. They enforce the knight to visit a specific cell at a specific 
 no solution exists, it returns an empty list.
 """
 def question5(M, N, i0, j0):
-    constraints = q5(M, N, i0, j0)
+    constraints = question5_fair(M, N, i0, j0)
 
     return constraints
 
