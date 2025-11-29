@@ -2,7 +2,7 @@ from knight_tour import *
 from symmetry import count_solutions_up_to_symmetry
 from plot import rainbow_plot
 from q5 import *
-import numpy
+from helpers import leave_one_out_subsets
 
 """
 The first question implementation. Solves the Knight's Tour problem.
@@ -107,33 +107,46 @@ def question5(M, N, i0, j0):
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
     base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
 
-
-
     print("=" * 20)
     print("SOLUTIONS BASE")
     print("=" * 20)
 
     for sol in base_solutions:
-        print(f"{sol} {hash(str(sol))}")
+        print(f"{sol}")
 
-    print("=" * 20)
-    print("CONSTRAINTS")
-    print("=" * 20)
+    print(f"number of solutions BASE : {len(base_solutions)}")
 
+    print("=" * 30)
+    print("TEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL")
+    print("=" * 30)
+
+    # fully constrained version of the problem
     solver_constraints, vars_constraints = build_knight_tour(M, N, i0, j0, mode='sc')
     constraints = question5_fair(M, N, i0, j0)
+    print(f"constraints: {constraints}")
 
-    for (t, i, j) in constraints:
-        solver_constraints.add_clause([vars_constraints[(i, j, t)]])
+    for c in constraints:
+        solver_constraints.add_clause([vars_constraints[c]])
 
     constraints_solutions, _ = extract_all_solutions(solver_constraints, M, N, T, vars_constraints)
-
-    print("=" * 20)
-    print("NEW SOLUTIONS")
-    print("=" * 20)
 
     for sol in constraints_solutions:
         print(f"{sol} {hash(str(sol))}")
 
-    return constraints
+    print(f"number of solutions FULL ADDITIONAL CONSTRAINTS : {len(constraints_solutions)}")
 
+
+    print("=" * 30)
+    print("TEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS")
+    print("=" * 30)
+
+    subsets = leave_one_out_subsets(constraints)
+    
+    print(f"subsets: {subsets}")
+    for subset in subsets:
+        print(f"  {subset}")
+        solutions = solve_with_constraints(subset, M, N, i0, j0)
+        for sol in solutions:
+            print(f"    solution: {sol} {hash(str(sol))}")
+
+    return constraints

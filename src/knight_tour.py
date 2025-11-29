@@ -48,12 +48,6 @@ This function will solve the Knight's Tour problem.
 @param i0: The start row (0-indexed)
 @param j0: The start column (0-indexed)
 @param mode: Whether to use naive quadratic constraints or linear ones
-
-
-
-
-
-
 """
 def build_knight_tour(M, N, i0, j0, mode='n'):
     print(f"solve_knight_tour: {M}x{N}@({i0}, {j0}) in {mode} mode")
@@ -85,4 +79,17 @@ def build_knight_tour(M, N, i0, j0, mode='n'):
     return solver, var
 
 
+"""
+This function builds the knight tour problem with additional specified constraints and solves it, returning all solutions.
+"""
+def solve_with_constraints(extra_constraints, M, N, i0, j0):
+    T = M * N
+
+    solver, vars = build_knight_tour(M, N, i0, j0, mode='sc')
+    for (t, i, j) in extra_constraints:
+        lit = vars[(i, j, t)]
+        solver.add_clause([lit])
+
+    sols, _ = extract_all_solutions(solver, M, N, T, vars)
+    return sols
 
