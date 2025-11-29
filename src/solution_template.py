@@ -1,7 +1,6 @@
 from knight_tour import *
 from symmetry import count_solutions_up_to_symmetry
 from plot import rainbow_plot
-from q5 import *
 from helpers import leave_one_out_subsets
 
 """
@@ -23,11 +22,7 @@ def question1(M, N, i0, j0):
     T = M * N
     
     solver, variables = build_knight_tour(M, N, i0, j0)
-
     solution, _ = extract_solution(solver, M, N, T, variables)
-
-    #print(f"variables: {variables}")
-    print(f"solution: {solution}")
     
     return solution, solver, list(variables.values())
 
@@ -46,13 +41,12 @@ def question3():
         for j0 in range(N):
             solver, variables = build_knight_tour(M, N, i0, j0)
             solutions, _ = extract_all_solutions(solver, M, N, T, variables)
-            for sol in solutions:
+            """for sol in solutions:
                 print("sol")
                 for row in sol:
-                    print(f"{row}")
+                    print(f"{row}")"""
 
             nb_sol += len(solutions)
-            print("Number of solutions", len(solutions))
     
     return nb_sol
 
@@ -73,16 +67,15 @@ def question4():
         for j0 in range(N):
             solver, variables = build_knight_tour(M, N, i0, j0)
             solutions, _ = extract_all_solutions(solver, M, N, T, variables)
-            index = 0        
+            """index = 0        
             for sol in solutions:
                 rainbow_plot(sol, f"3x4_{index}")
                 index += 1
                 print("sol")
                 for row in sol:
-                    print(f"{row}")
+                    print(f"{row}")"""
             nb_sol += count_solutions_up_to_symmetry(solutions, M, N)
-            print("Number of solutions so far", nb_sol)
-
+            
     return nb_sol
 
 """
@@ -115,7 +108,7 @@ def question5(M, N, i0, j0):
     print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
 
     solver_constrained, vars_constrained = build_knight_tour(M, N, i0, j0, mode='sc')
-    constraints = question5_fair(M, N, i0, j0)
+    constraints = get_uniqueness_constraints(M, N, i0, j0)
     print(f"  constraints: {constraints}")
 
     """for c in constraints:

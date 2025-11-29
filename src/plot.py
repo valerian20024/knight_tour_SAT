@@ -2,7 +2,12 @@ import numpy as np
 import matplotlib.pylab as pl
 from matplotlib import colormaps as cm
 
+"""
+This function plots a solution using orange and white cells
+displaying the number of moves the knight made.
 
+@param solution: list of list. The solution to display.
+"""
 def plot_solution(solution):
 	solution_array = np.array(solution)
 	M, N = solution_array.shape

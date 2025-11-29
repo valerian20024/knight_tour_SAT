@@ -135,10 +135,6 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
     for t in range(T):
         # List of literals for all cells at time t
         lits = [var[(i, j, t)] for i in range(M) for j in range(N)]
-        #print(f"lits", lits)
-
-        # At least one cell is visited
-        #solver.add_clause(lits)
 
         n = len(lits)
 
@@ -210,8 +206,6 @@ def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
                 var[('aux_2', k, i, j)] = var_id
                 aux.append(var_id)
                 var_id += 1
-
-            #print(f"aux = {aux}")
 
             solver.add_clause([-lits[0], aux[0]])               # First: !X_0 v a_0
             for l in range(1, n - 1):

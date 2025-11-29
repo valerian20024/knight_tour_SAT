@@ -1,30 +1,32 @@
 from pysat.solvers import Glucose3
 from constraints import *
+import random
 
-
+"""
+Return one solution from the solver.
+"""
 def extract_solution(solver, M, N, T, var):
     res = False
     solution = None
     if solver.solve():
-        #print("Solution found")
         res = True
         model = solver.get_model()  # list of all the variables
-        #print(f"model : {model}")
         solution = model_to_solution(model, M, N, T, var)
 
     return solution, res
 
-
+"""
+Return all the solutions from the solver.
+"""
 def extract_all_solutions(solver, M, N, T, var):
     res = False
     solutions = []
     if solver.solve():
-        #print("Solution found")
         res = True
         for model in solver.enum_models():  # list of all the variables
             solution = model_to_solution(model, M, N, T, var)
             solutions.append(solution)
-            
+
     return solutions, res
 
 """Helper function to convert a SAT model into a solution matrix."""
@@ -47,7 +49,7 @@ This function will solve the Knight's Tour problem.
 @param N: The number of columns in the chessboard.
 @param i0: The start row (0-indexed)
 @param j0: The start column (0-indexed)
-@param mode: Whether to use naive quadratic constraints or linear ones
+@param mode: Whether to use naive or efficient constraints.
 """
 def build_knight_tour(M, N, i0, j0, mode='n'):
     #print(f"solve_knight_tour: {M}x{N}@({i0}, {j0}) in {mode} mode")
@@ -80,7 +82,8 @@ def build_knight_tour(M, N, i0, j0, mode='n'):
 
 
 """
-This function builds the knight tour problem with additional specified constraints and solves it, returning all solutions.
+Builds the knight tour problem with additional specified constraints 
+and solves it, returning all solutions.
 """
 def solve_with_constraints(extra_constraints, M, N, i0, j0):
     T = M * N
@@ -93,3 +96,68 @@ def solve_with_constraints(extra_constraints, M, N, i0, j0):
     sols, _ = extract_all_solutions(solver, M, N, T, vars)
     return sols
 
+"""
+Computes the strictly necessary set of constraints to ensure 
+the problem has only one solution. Adding these constraints
+to the SAT solver will ensure only one solution. Add a strictly 
+smaller subset of them to the SAT solver will make it output
+several solutions.
+"""
+def get_uniqueness_constraints(M, N, i0, j0):
+    random.seed()  # to ensure outputs fairness
+
+    T = M * N
+    solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
+    solutions, has_sol = extract_all_solutions(solver, M, N, T, variables)
+
+    if not has_sol or len(solutions) <= 1:
+        return []
+
+    # Build paths representing the knight's moves.
+    paths = set()  # keep unique paths to improve computation time
+    for sol in solutions:
+        path = [None] * T
+        for i in range(M):
+            for j in range(N):
+                if sol[i][j] >= 0:
+                    path[sol[i][j]] = (i, j)
+        paths.add(tuple(path))
+    paths = tuple(paths)  # to be able to index it
+
+    """print(f"\nPaths:")
+    for p in paths:
+        print(f"           {p[0:12]} {hash(p)}")
+        print()"""
+    
+    # A reference path will be compared with alternative paths
+    ref_path = random.choice(paths)
+    constraints = set()
+    
+    # Eliminate every alternative path. Output the constraint on i, j, t
+    # that will allow to only keep the reference path as solution.
+    for alt_path in paths:
+        if alt_path is not ref_path:  # don't kill the chosen one
+            """print(f"ref path : {ref_path} {hash(ref_path)}")
+            print(f"alt path : {alt_path} {hash(alt_path)}")"""
+
+            # Check whether this alternative already violates one of the constraints
+            blocked = False
+            for t, forced_i, forced_j in constraints:
+                if alt_path[t] != (forced_i, forced_j):
+                    blocked = True
+                    break
+            if blocked:
+                continue  # alt path unreachable given current constraints
+            
+            # Finding the constraint that can differentiate two paths.
+            # Constraints are indexed using t, i, j order because paths are
+            # inherently a set of t-indexed (i, j) pairs.
+            for t in range(1, T):  # every path starts at the same place at t = 0
+                if alt_path[t] != ref_path[t]:
+                    i, j = ref_path[t]  # force the reference position
+                    constraints.add((t, i, j))
+                    break
+
+    # Swapping back to normal i, j, t indexing
+    constraints = [(i, j, t) for (t, i, j) in constraints]
+    return constraints
