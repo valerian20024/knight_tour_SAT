@@ -24,11 +24,10 @@ def question5_fair(M, N, i0, j0):
         paths.add(tuple(path))
     paths = tuple(paths)  # to be able to index it
 
-    print(f"\nPaths:")
+    #print(f"\nPaths:")
     for p in paths:
         print(f"           {p[0:12]} {hash(p)}")
         print()
-    
     
     # The chosen path to which the others will be compared
     ref_path = random.choice(paths)
@@ -37,8 +36,8 @@ def question5_fair(M, N, i0, j0):
     # Eliminating every other solution
     for alt_path in paths:
         if alt_path is not ref_path:  # don't kill the chosen one
-            print(f"ref path : {ref_path} {hash(ref_path)}")
-            print(f"alt path : {alt_path} {hash(alt_path)}")
+            #print(f"ref path : {ref_path} {hash(ref_path)}")
+            #print(f"alt path : {alt_path} {hash(alt_path)}")
 
             # Check whether this alternative already violates one of the constraints
             blocked = False
@@ -52,12 +51,12 @@ def question5_fair(M, N, i0, j0):
             # Finding the constraint tat can differentiate two paths
             for t in range(1, T):  # t = 0 is the fixed start, don't change it.
                 if alt_path[t] != ref_path[t]:
-                    print(f"    alt_path[{t}] != ref_path[{t}] ==> {alt_path[t]} != {ref_path[t]}")
+                    #print(f"    alt_path[{t}] != ref_path[{t}] ==> {alt_path[t]} != {ref_path[t]}")
                     i, j = ref_path[t]         # force the reference position
-                    print(f"    Adding constraint : (t: i, j) = ({t}: {i}, {j})")
+                    #print(f"    Adding constraint : (t: i, j) = ({t}: {i}, {j})")
                     constraints.add((t, i, j))
                     break
-        print(f"constraints:\n  {constraints}")
+        #print(f"constraints:\n  {constraints}")
     # swapping back to normal i, j, t indexing
     constraints = [(i, j, t) for (t, i, j) in constraints]
-    return list(constraints)
+    return constraints
