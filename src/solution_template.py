@@ -98,7 +98,15 @@ of the solution. They enforce the knight to visit a specific cell at a specific 
 no solution exists, it returns an empty list.
 """
 def question5(M, N, i0, j0):
+    T = M * N
+    solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
+    base_solutions, _ = extract_all_solutions(solver, M, N, T, variables)
+
     constraints = question5_fair(M, N, i0, j0)
+
+    #for constraint in constraints:
+    #    solver.add_clause(constraint)
+
 
     return constraints
 
