@@ -95,7 +95,14 @@ This is implemented in \texttt{}
 
 \section{Finding additional constraints}
 
-
+First we enumerate all tours that satisfy the basic encoding. 
+Each tour is converted into a path, i.e. a sequence of positions indexed by time step $t$, and duplicate paths are discarded.
+From the remaining distinct tours, we randomly select one to be the unique tour that will survive.
+This guarantees fairness because different runs or different starting cells typically choose different winners.
+Finally, we iterate over the other tours in arbitrary order: 
+for each alternative that is still compatible with the clauses (constraints) added so far, 
+we locate the earliest time step $t \ge 1$ at which it diverges from the chosen tour and force the knight to occupy the chosen tour's position at that step by adding the unit clause $X_{i,j,t}$. 
+Because a new clause is introduced only when an alternative would otherwise remain satisfiable, every added clause is necessary: removing it would immediately allow that alternative (and possibly others) back.
 
 \bibliographystyle{plain}
 \bibliography{references}
