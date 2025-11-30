@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
 
 \hypersetup{
     colorlinks=true,
@@ -51,21 +52,64 @@
 
 \section{Introduction}
 
-This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at~\cite{knight_tour_github}.
+This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at~\cite{knight_tour_github} \footnote{The repository has been made public \textit{after} the submission deadline.}.
 
 \section{Naive solution}
+Let $M$ and $N$ be the dimensions of the board and $T = M \cdot N$ the total number of moves.
+For every cell $(i,j)$ ($0 \leq i < M$, $0 \leq j < N$) and every time step $t$ ($0 \leq t < T$)
+we introduce a Boolean variable representing the knight's position at a given timestep:
+
+\[
+x_{i,j,t}
+\]
+
 The first attempt at solving the problem involves the following set of constraints:
+
 
 \begin{enumerate}
     \item A cell can only be occupied at one timestep.\footnote{To ensure only one constraint, one can simply ensure ``at most one'' and ``at least one''.}
-    \item For a given timestep, the knight can only occupy one cell.
-    \item Legal moves of the knight restrict its movement. Formally,
-    \[wearere \]
+    That is, there must be at least one time step for visiting a cell, and visiting a cell at a previous time step $t_1$ enforces to not revisit it at time step $t_2 > t_1$.
+    Formally,
+    \begin{align}
+        \bigvee_{t=0}^{T-1} x_{i,j,t} \\
+        \neg x_{i,j,t_1} \vee \neg x_{i,j,t_2}
+    \end{align}
+    
+
+
+    \item For a given timestep, the knight can only occupy one cell. 
+    Similarly to the previoius constraints, one can force the knight to choose, for each timestep, at least one cell on the board. Then, forbid it to choose another cell for this time step. 
+    Formally,
+
+    \begin{align}
+        \bigvee_{i=0}^{M-1} \bigvee_{j=0}^{N-1} x_{i,j,t} \\
+        \neg x_{i_1,j_1,t} \vee \neg x_{i_2,j_2,t}
+    \end{align}
+    
+    \item Legal moves of the knight restrict its movement. 
+    Chess knights can move form a given time step $t$ in $8$ different \textit(L-shaped) directions to another cell in $t + 1$ (provided it does not land outside the chessboard). 
+    Let $L$ be the set of available legal moves of the knight at $t$.
+    Formally,
+    
+    \begin{align}
+        \neg x_{i,j,t} \bigvee_{\text{$(i', j') \in L$}} x_{i',j',t+1}
+    \end{align}
+
+    One can go even a step further to help the SAT solver by specifying the reverse constraints. 
+    That is, if a given cell has been reached at $t + 1$, then the knight must have perform one of its legal moves at $t$ and thus it was standing on another cell at $t$. 
+    Let $L'$ be the moves available to the knight at time $t + 1$.
+    Formally,
+
+    \begin{align}
+        \neg x_{i',j',t+1} \bigvee_{\text{$(i, j) \in L'$}} x_{i,j,t}
+    \end{align}
+
 \end{enumerate}
 
-This first version is able to solve 
 
 %The constraints are implemented in \texttt{add\_legal\_moves\_constraints}, \texttt{add\_cell\_constraints\_naive}, \texttt{add\_time\_constraints\_naive}, \texttt{add\_cell\_constraints\_sequential\_counter}, \texttt{add\_time\_constraints\_sequential\_counter}.
+
+Each set of constraints are implemented in dedicated functions in the code.
 
 \section{Efficient solution}
 While the naive solution works well in general, for boards ranging up to \ldots x \ldots it has a quadratic number of constraints for encoding the one cell and one time only.
@@ -90,6 +134,7 @@ This is implemented in \texttt{}
 
 \section{Counting up to symmetry}
 The easiest way to count up to symmetry was to enumerate all the solutions, apply symmetries and check whether or not the solution is identical to another solution. 
+While this might not be the most effective nor elegant solution, it was fast enough for solving boards up to $5 \times 5$ in a few seconds.
 
 This is implemented in \texttt{}
 
