@@ -7,7 +7,7 @@ Return one solution from the solver.
 """
 def extract_solution(solver, M, N, T, var):
     res = False
-    solution = None
+    solution = [[]]
     if solver.solve():
         res = True
         model = solver.get_model()  # list of all the variables
@@ -15,19 +15,6 @@ def extract_solution(solver, M, N, T, var):
 
     return solution, res
 
-"""
-Return all the solutions from the solver.
-def extract_all_solutions_base(solver, M, N, T, var):
-    res = False
-    solutions = []
-    if solver.solve():
-        res = True
-        for model in solver.enum_models():  # list of all the variables
-            solution = model_to_solution(model, M, N, T, var)
-            solutions.append(solution)
-
-    return solutions, res
-"""
 
 """
 Return all the solutions from the solver.

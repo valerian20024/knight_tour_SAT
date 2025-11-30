@@ -5,6 +5,7 @@ from knight_tour import *
 from helpers import *
 from plot import *
 
+
 """
 This script generates many solutions and compares timing between the efficient 
 and naive solutions.
@@ -103,29 +104,29 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
 if __name__ == '__main__':
 
     # Question 1
-    #rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
+    rainbow_plot(st.question1(3, 4, 0, 0)[0], "figs/test/test_rainbow_plot") # custom made
     #rainbow_plot_all(st.question1(3, 4, 0, 0)[0], "figs/test/testrainbowplotall") # plotting all solutions
     
-    #timing_test_script()
+    timing_test_script()
     #rainbow_plot(st.question1(3, 3, 1, 1)[0], "figs/manual/test_3x3@(1, 1)")
 
-    #plot_solution(st.question1(5, 5, 0, 0)[0]) # there should be a solution
-    #plot_solution(st.question1(3, 7, 0, 0)[0]) # there should be a solution
-    #plot_solution(st.question1(7, 5, 3, 1)[0]) # there should be a solution
+    plot_solution(st.question1(5, 5, 0, 0)[0]) # there should be a solution
+    plot_solution(st.question1(3, 7, 0, 0)[0]) # there should be a solution
+    plot_solution(st.question1(7, 5, 3, 1)[0]) # there should be a solution
     #plot_solution(st.question1(4, 4, 0, 0)[0]) # there should not be a solution
 
     # Question 2
     plot_solution(st.question1(8, 8, 0, 0)[0])
 
     # Question 3
-    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
-    #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
+    print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
 
     # Question 5
-    #print(st.question5(4, 4, 0, 0)) # should be the empty list
-    #print(st.question5(3, 4, 1, 3))
-    #uniqueness_constraints_test_script(3, 4, 1, 3)
-    #print(st.question5(5, 5, 1, 3))
-    #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
+    print(st.question5(4, 4, 0, 0)) # should be the empty list
+    print(st.question5(3, 4, 1, 3))
+    uniqueness_constraints_test_script(3, 4, 1, 3)
+    print(st.question5(5, 5, 1, 3))
+    print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
