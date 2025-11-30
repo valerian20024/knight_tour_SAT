@@ -118,7 +118,7 @@ if __name__ == '__main__':
     #plot_solution(st.question1(8, 8, 0, 0)[0])    
 
     # Question 3
-    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
     print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
@@ -126,6 +126,6 @@ if __name__ == '__main__':
     # Question 5
     #print(st.question5(4, 4, 0, 0)) # should be the empty list
     #print(st.question5(3, 4, 1, 3))
-    uniqueness_constraints_test_script(3, 4, 1, 3)
+    #uniqueness_constraints_test_script(3, 4, 1, 3)
     #print(st.question5(5, 5, 1, 3))
     #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call

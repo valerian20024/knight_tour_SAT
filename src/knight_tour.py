@@ -17,8 +17,7 @@ def extract_solution(solver, M, N, T, var):
 
 """
 Return all the solutions from the solver.
-"""
-def extract_all_solutions(solver, M, N, T, var):
+def extract_all_solutions_base(solver, M, N, T, var):
     res = False
     solutions = []
     if solver.solve():
@@ -26,6 +25,26 @@ def extract_all_solutions(solver, M, N, T, var):
         for model in solver.enum_models():  # list of all the variables
             solution = model_to_solution(model, M, N, T, var)
             solutions.append(solution)
+
+    return solutions, res
+"""
+
+"""
+Return all the solutions from the solver.
+"""
+def extract_all_solutions(solver, M, N, T, var):
+    res = False
+    solutions = []
+    if solver.solve():
+        res = True
+        seen = set()
+        for model in solver.enum_models():  # list of all the variables
+            solution = model_to_solution(model, M, N, T, var)
+            # Convert to tuple of tuples for hashing
+            sol_tuple = tuple(tuple(row) for row in solution)
+            if sol_tuple not in seen:
+                seen.add(sol_tuple)
+                solutions.append(solution)
 
     return solutions, res
 

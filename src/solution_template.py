@@ -58,14 +58,14 @@ Two solutions are identical if one can be obtained by applying a symmetry to the
 @return nb_sol: The number of solutions up to symmetry of the problem.
 """
 def question4():
-    M = 3
-    N = 4
+    M = 5
+    N = 5
     T = M * N
     
     nb_sol = 0
     for i0 in range(M):
         for j0 in range(N):
-            solver, variables = build_knight_tour(M, N, i0, j0)
+            solver, variables = build_knight_tour(M, N, i0, j0, 'sc')
             solutions, _ = extract_all_solutions(solver, M, N, T, variables)
             """index = 0        
             for sol in solutions:
