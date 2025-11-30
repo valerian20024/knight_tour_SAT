@@ -3,12 +3,14 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
 
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
+    linkcolor=purple,
     urlcolor=blue,
-    citecolor=blue
+    citecolor=purple
 }
 
 \title{knight_tour_SAT}
@@ -52,7 +54,7 @@
 
 \section{Introduction}
 
-This paper describes the way each question of the project has been solved. A more comprehensive view on the submitted source code can be found at~\cite{knight_tour_github} \footnote{The repository has been made public \textit{after} the submission deadline.}.
+This report describes the way each question of the project has been solved as well as the results obtained. A more comprehensive view on the submitted source code can be found at~\url{https://github.com/valerian20024/knight_tour_SAT} \footnote{The repository has been made public \textit{after} the submission deadline.}.
 
 \section{Naive solution}
 Let $M$ and $N$ be the dimensions of the board and $T = M \cdot N$ the total number of moves.
@@ -106,37 +108,41 @@ The first attempt at solving the problem involves the following set of constrain
 
 \end{enumerate}
 
-
-%The constraints are implemented in \texttt{add\_legal\_moves\_constraints}, \texttt{add\_cell\_constraints\_naive}, \texttt{add\_time\_constraints\_naive}, \texttt{add\_cell\_constraints\_sequential\_counter}, \texttt{add\_time\_constraints\_sequential\_counter}.
-
 Each set of constraints are implemented in dedicated functions in the code.
 
+Naive solutions\footnote{on a Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz} is able to solve $8 \times 8$ board in about $1.5$ to $1.7$ [s], depending on the knight start position.
+It can also solve up to $13 \times 13$ boards in less than $10$ [s] but gets overwhelmed when reaching $15 \times 15$ boards (it takes more than a minute to find the solution)
+
 \section{Efficient solution}
-While the naive solution works well in general, for boards ranging up to \ldots x \ldots it has a quadratic number of constraints for encoding the one cell and one time only.
-A more efficient solution would benefit of having less constraints for reducing the search space of the solver.
-After doing some research about different encodings~\cite{hoos2007sat} for the ``at-most-one'' family of constraints (refined to ``exactly one'' in this problem), it appeared the naive encoding is actually known as ``pairwise encoding'', and the sequential counter seems to be the one most effective encodings there is.
-The sequential counter works by assigning a set of new, auxiliary variables, whose size grows \textit{linearly} with the size of the problem.
+While the naive approach can solve decently sized chessboard in reasonable time on a mid-range laptop, it must use a quadratic number of clauses for encoding the ``exactly one'' family of clauses.
+A more efficient solution would benefit from having less clauses for reducing the search space of the solver.
+After doing some research about different encodings for the ``at-most-one'' family of constraints (refined to ``exactly one'' in this problem), the sequential counter encoding seemed to be one of the most effective (yet simple enough)~\cite{holldobler2013efficient}.
+The sequential counter works by assigning a set of new, \textit{auxiliary variables} $a_k$ for $k \in [0, n]$, whose size grows \textit{linearly} with the size of the problem. These variables act as a chain that tracks whether a solution has been found previously. If it is the case, then the solver should know it cannot find any more solution. It will thus propagate the information through the $a_k$ instead of enumerating all pairwise possibilities. 
 
-This technique can be applied to both the one cell only and one timestep only constraints. 
+Formally, abstracting away the positions and time steps for a simpler mono-indexed set of variables, the key clauses are : 
+\begin{align}
+    &\bigvee_{i} x_i                     & \text{There is at least one solution.}\\
+    \neg x_k &\lor a_k,                  & \text{A solution triggers the $a$, for $k \in [0; n - 2]$ }\\
+    \neg a_{k-1} &\lor a_k,              & \text{Propagating the information through the $a_k$'s.}\\
+    \neg x_k &\lor \neg a_{k-1},         & \text{A new solution requires no previous solution.}\\
+\end{align}
 
-However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by~\cite{hoos2007sat}
-Indeed, because of  
+This technique can be applied to both the one cell only and one time step only constraints. 
 
-This is implemented in \texttt{}
+However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by~\cite{MarquesSilvaLynce07}. It has actually a high variance depending on the problem instance. It is sometimes better, sometimes worse than pairwise encoding. This can be solved by implementing a more clever version of the sequential encoding, which always beats the pairwise encoding. However, as the naive approach was sufficient for the scope of the project, sequential encoding has not been developed further. 
 
+Indeed, because of
 
 \section{Counting solutions}
 In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models} method after solving the problem and simply count them.
 
-Comparing the results obtained when solving $3 \times 4$ as well as $5 \time 5$ chessboards with the ones showed in~\cite{wikipedia_knights_tour}
 
-This is implemented in \texttt{}
+Solving the $3 \times 4$ chessboard takes about $1$ [s], finding $16$ solutions, while the $5 \times 5$ chessboard takes $2$ [s], finding $1728$ solutions. Comparing theses results with the ones showed in~\cite{wikipedia_knights_tour}, one can see that it's the right number of solutions. Unfortunately, it will not be possible to dare solving for larger boards in reasonable time on this hardware.
 
 \section{Counting up to symmetry}
-The easiest way to count up to symmetry was to enumerate all the solutions, apply symmetries and check whether or not the solution is identical to another solution. 
+The easiest way to count up to symmetry was to enumerate all the solutions, apply symmetries and check whether or not the solution is identical to another solution. This enumeration takes into account every possible solutions for every possible starting position for a given chessboard size, as for the previous counting technique. 
 While this might not be the most effective nor elegant solution, it was fast enough for solving boards up to $5 \times 5$ in a few seconds.
-
-This is implemented in \texttt{}
+Solving the $3 \times 4$ chessboard takes about $1,2$ [s], finding $12$ solutions, while the $5 \times 5$ chessboard takes $6.1$ [s], finding $1568$ solutions.
 
 \section{Finding additional constraints}
 
