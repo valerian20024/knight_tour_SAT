@@ -54,7 +54,7 @@
 
 \section{Introduction}
 
-This report describes the way each question of the project has been solved as well as the results obtained. A more comprehensive view on the submitted source code can be found at~\url{https://github.com/valerian20024/knight_tour_SAT} \footnote{The repository has been made public \textit{after} the submission deadline.}.
+This report describes the way each question of the project has been solved as well as the results obtained. A more comprehensive view on the submitted source code can be found at~\url{https://github.com/valerian20024/knight_tour_SAT}~\footnote{The repository has been made public \textit{after} the submission deadline.}.
 
 \section{Naive solution}
 Let $M$ and $N$ be the dimensions of the board and $T = M \cdot N$ the total number of moves.
@@ -110,7 +110,7 @@ The first attempt at solving the problem involves the following set of constrain
 
 Each set of constraints are implemented in dedicated functions in the code.
 
-Naive solutions\footnote{on a Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz} is able to solve $8 \times 8$ board in about $1.5$ to $1.7$ [s], depending on the knight start position.
+Naive solutions\footnote{on a Intel~(R) Core~(TM) i7--8565U CPU @ 1.80GHz} is able to solve $8 \times 8$ board in about $1.5$ to $1.7$ [s], depending on the knight start position.
 It can also solve up to $13 \times 13$ boards in less than $10$ [s] but gets overwhelmed when reaching $15 \times 15$ boards (it takes more than a minute to find the solution)
 
 \section{Efficient solution}
@@ -119,7 +119,7 @@ A more efficient solution would benefit from having less clauses for reducing th
 After doing some research about different encodings for the ``at-most-one'' family of constraints (refined to ``exactly one'' in this problem), the sequential counter encoding seemed to be one of the most effective (yet simple enough)~\cite{holldobler2013efficient}.
 The sequential counter works by assigning a set of new, \textit{auxiliary variables} $a_k$ for $k \in [0, n]$, whose size grows \textit{linearly} with the size of the problem. These variables act as a chain that tracks whether a solution has been found previously. If it is the case, then the solver should know it cannot find any more solution. It will thus propagate the information through the $a_k$ instead of enumerating all pairwise possibilities. 
 
-Formally, abstracting away the positions and time steps for a simpler mono-indexed set of variables, the key clauses are : 
+Formally, abstracting away the positions and time steps for a simpler mono-indexed set of variables, the key clauses are: 
 \begin{align}
     &\bigvee_{i} x_i                     & \text{There is at least one solution.}\\
     \neg x_k &\lor a_k,                  & \text{A solution triggers the $a$, for $k \in [0; n - 2]$ }\\
@@ -130,8 +130,6 @@ Formally, abstracting away the positions and time steps for a simpler mono-index
 This technique can be applied to both the one cell only and one time step only constraints. 
 
 However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by~\cite{MarquesSilvaLynce07}. It has actually a high variance depending on the problem instance. It is sometimes better, sometimes worse than pairwise encoding. This can be solved by implementing a more clever version of the sequential encoding, which always beats the pairwise encoding. However, as the naive approach was sufficient for the scope of the project, sequential encoding has not been developed further. 
-
-Indeed, because of
 
 \section{Counting solutions}
 In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models} method after solving the problem and simply count them.
@@ -147,7 +145,7 @@ Solving the $3 \times 4$ chessboard takes about $1,2$ [s], finding $12$ solution
 \section{Finding additional constraints}
 
 First we enumerate all tours that satisfy the basic encoding. 
-Each tour is converted into a path, i.e. a sequence of positions indexed by time step $t$, and duplicate paths are discarded.
+Each tour is converted into a path, i.e., a sequence of positions indexed by time step $t$, and duplicate paths are discarded.
 From the remaining distinct tours, we randomly select one to be the unique tour that will survive.
 This guarantees fairness because different runs or different starting cells typically choose different winners.
 Finally, we iterate over the other tours in arbitrary order: 
