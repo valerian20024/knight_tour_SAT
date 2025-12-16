@@ -210,6 +210,7 @@ __marimo__/
 src/figs/test/
 src/logic/
 logic/
+latex/main.pdf
 
 .vscode/
 .VSCodeCounter/

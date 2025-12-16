@@ -7,7 +7,7 @@ Return one solution from the solver.
 """
 def extract_solution(solver, M, N, T, var):
     res = False
-    solution = None
+    solution = [[]]
     if solver.solve():
         res = True
         model = solver.get_model()  # list of all the variables
