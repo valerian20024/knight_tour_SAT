@@ -15,19 +15,6 @@ def extract_solution(solver, M, N, T, var):
 
     return solution, res
 
-"""
-Return all the solutions from the solver.
-def extract_all_solutions_base(solver, M, N, T, var):
-    res = False
-    solutions = []
-    if solver.solve():
-        res = True
-        for model in solver.enum_models():  # list of all the variables
-            solution = model_to_solution(model, M, N, T, var)
-            solutions.append(solution)
-
-    return solutions, res
-"""
 
 """
 Return all the solutions from the solver.
@@ -142,11 +129,6 @@ def get_uniqueness_constraints(M, N, i0, j0):
                     path[sol[i][j]] = (i, j)
         paths.add(tuple(path))
     paths = tuple(paths)  # to be able to index it
-
-    """print(f"\nPaths:")
-    for p in paths:
-        print(f"           {p[0:12]} {hash(p)}")
-        print()"""
     
     # A reference path will be compared with alternative paths
     ref_path = random.choice(paths)
@@ -156,9 +138,6 @@ def get_uniqueness_constraints(M, N, i0, j0):
     # that will allow to only keep the reference path as solution.
     for alt_path in paths:
         if alt_path is not ref_path:  # don't kill the chosen one
-            """print(f"ref path : {ref_path} {hash(ref_path)}")
-            print(f"alt path : {alt_path} {hash(alt_path)}")"""
-
             # Check whether this alternative already violates one of the constraints
             blocked = False
             for t, forced_i, forced_j in constraints:

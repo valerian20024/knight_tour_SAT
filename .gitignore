@@ -209,6 +209,7 @@ __marimo__/
 # Ad hoc
 src/figs/test/
 src/logic/
+logic/
 
 .vscode/
 .VSCodeCounter/

@@ -32,8 +32,8 @@ The third question implementation.
 @return nb_sol: The number of solutions for a given instance of the problem.
 """
 def question3():
-    M = 3
-    N = 4
+    M = 5
+    N = 5
     T = M * N
 
     nb_sol = 0
@@ -58,8 +58,8 @@ Two solutions are identical if one can be obtained by applying a symmetry to the
 @return nb_sol: The number of solutions up to symmetry of the problem.
 """
 def question4():
-    M = 5
-    N = 5
+    M = 3
+    N = 4
     T = M * N
     
     nb_sol = 0
@@ -96,45 +96,22 @@ def question5(M, N, i0, j0):
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
     base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
 
-    print("=" * 20 + "\nSOLUTIONS BASE\n" + "=" * 20)
-
-    for sol in base_solutions:
-        print(f"  {sol}")
-    print(f"  => number of solutions BASE : {len(base_solutions)}")
-
-
-
-
-    print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
-
     solver_constrained, vars_constrained = build_knight_tour(M, N, i0, j0, mode='sc')
     constraints = get_uniqueness_constraints(M, N, i0, j0)
-    print(f"  constraints: {constraints}")
 
-    """for c in constraints:
+    for c in constraints:
         solver_constrained.add_clause([vars_constrained[c]])
-
     constraints_solutions, _ = extract_all_solutions(solver_constrained, M, N, T, vars_constrained)
-    """
-
     constraints_solutions = solve_with_constraints(constraints, M, N, i0, j0)
-
+    
     for sol in constraints_solutions:
         print(f"{sol} {hash(str(sol))}")
-
-    print(f"number of solutions FULL ADDITIONAL CONSTRAINTS : {len(constraints_solutions)}")
-
-
-
-
-    print("=" * 30 + "\nTEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS\n" + "=" * 30)
+    
     subsets = leave_one_out_subsets(constraints)
     
-    print(f"subsets: {subsets}")
     for subset in subsets:
-        print(f"  {subset}")
         solutions = solve_with_constraints(subset, M, N, i0, j0)
-        print(f"  number of solutions with subset {subset} is {len(solutions)}")
+        
         for sol in solutions:
             print(f"    solution: {sol} {hash(str(sol))}")
 
