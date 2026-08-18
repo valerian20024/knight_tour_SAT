@@ -207,10 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 # Ad hoc
-src/figs/test/
-src/logic/
-logic/
-latex/main.pdf
+src/figs/
+doc/report/main.pdf
+venv/
 
 .vscode/
 .VSCodeCounter/
