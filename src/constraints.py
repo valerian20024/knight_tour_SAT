@@ -7,6 +7,7 @@ KNIGHT_MOVES = ((-2, -1), (-2, 1),
                 ( 1, -2), ( 1, 2),
                 ( 2, -1), ( 2, 1))
 
+#todo remove T as an argument, compute locally
 def add_legal_moves_constraints(solver, M, N, T, var):
     """This function adds constraints to the SAT solver that enforce
     the possible moves of the knight. 
@@ -63,6 +64,7 @@ def add_legal_moves_constraints(solver, M, N, T, var):
     
     return solver, var
 
+#todo remove T as an argument, compute locally
 def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: dict):
     """Adds constraints enforcing that at each timestep, we visit a single 
     cell.
@@ -91,6 +93,7 @@ def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: di
 
     return solver, var
 
+#todo remove T as an argument, compute locally
 def add_time_constraints_naive(solver, M, N, T, var):
     """Adds constraints enforcing a given cell is visited at exactly 
     one time step.
@@ -118,6 +121,7 @@ def add_time_constraints_naive(solver, M, N, T, var):
     
     return solver, var
 
+#todo remove T as an argument, compute locally
 def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
     """Adds constraints enforcing that at each timestep, we visit a single 
     cell.
@@ -169,6 +173,7 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
         
     return solver, var, var_id
 
+#todo remove T as an argument, compute locally
 def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
     """Adds constraints enforcing a given cell is visited at exactly 
     one time step.

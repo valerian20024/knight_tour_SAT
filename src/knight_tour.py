@@ -2,10 +2,9 @@ from pysat.solvers import Glucose3
 from constraints import *
 import random
 
-"""
-Return one solution from the solver.
-"""
-def extract_solution(solver, M, N, T, var):
+#todo return only solution, will deal with whether it's empty elsewhere
+def extract_solution(solver: Glucose3, M: int, N: int, T: int, var: dict):
+    """Return one solution from the solver."""
     res = False
     solution = [[]]
     if solver.solve():
@@ -15,11 +14,9 @@ def extract_solution(solver, M, N, T, var):
 
     return solution, res
 
-
-"""
-Return all the solutions from the solver.
-"""
+#todo merge with only extract one solution. Duplicated logic.
 def extract_all_solutions(solver, M, N, T, var):
+    """Return all the solutions from the solver."""
     res = False
     solutions = []
     if solver.solve():
@@ -35,8 +32,8 @@ def extract_all_solutions(solver, M, N, T, var):
 
     return solutions, res
 
-"""Helper function to convert a SAT model into a solution matrix."""
 def model_to_solution(model, M, N, T, var):
+    """Helper function to convert a SAT model into a solution matrix."""
     solution = [[-1] * N for m in range(M)]  # N x M list filled with -1
     for index in range(T):
         for i in range(M):
@@ -50,8 +47,7 @@ def model_to_solution(model, M, N, T, var):
 
 
 def build_knight_tour(M, N, i0, j0, mode='n'):
-    """
-    This function will solve the Knight's Tour problem.
+    """Orchestrator to solve the Knight's Tour problem.
 
     @param M: The number of rows in the chessboard.
     @param N: The number of columns in the chessboard.

@@ -5,25 +5,24 @@ from knight_tour import *
 from helpers import *
 from plot import *
 
-
-"""
-This script generates many solutions and compares timing between the efficient 
-and naive solutions.
-"""
 def timing_test_script():
+    """ This script compares timing between many efficient and naive solutions."""
 
-    def test(m, n, i0, j0, mode):
-        dir_path = f"figs/test/{mode}/{m}x{n}/"
+    def test(M: int, N: int, i0: int, j0: int, mode: str):
+        """Tests the time it takes to find a solution."""
+        dir_path = f"figs/test/{mode}/{M}x{N}/"
         filename = f"{i0}_{j0}"
         path = dir_path + filename
         os.makedirs(dir_path, exist_ok=True)
 
+        T = M * N
+
         start = time()
-        solver, var = build_knight_tour(m, n, i0, j0, mode)
-        solution, res = extract_solution(solver, m, n, m * n, var)
+        solver, vars = build_knight_tour(M, N, i0, j0, mode)
+        solution, res = extract_solution(solver, M, N, T, vars)
         end = time()
 
-        if res: 
+        if res:
             rainbow_plot(solution, path)
 
         return start, end, res
