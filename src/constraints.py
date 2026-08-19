@@ -1,40 +1,42 @@
+from pysat.solvers import Glucose3
 from helpers import valid_pos
 
-# Constant representing the knights moves offsets
-KNIGHT_MOVES = [(-2, -1), (-2, 1),
+# Knights moves offsets
+KNIGHT_MOVES = ((-2, -1), (-2, 1),
                 (-1, -2), (-1, 2),
-                (1, -2), (1, 2),
-                (2, -1), (2, 1)]
+                ( 1, -2), ( 1, 2),
+                ( 2, -1), ( 2, 1))
 
-"""
-This function adds constraints to the SAT solver that enforce
-the possible moves of the knight. If a position was occupied
-at a previous timestep, then all the positions that can be
-reach by enumerating the knight moves can be occupied at the
-next time step.
-
-@param solver: The solver instance to add constraints to.
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param T: The number of timesteps.
-@param var: A dictionary containing all the variables.
-"""
 def add_legal_moves_constraints(solver, M, N, T, var):
+    """This function adds constraints to the SAT solver that enforce
+    the possible moves of the knight. 
+    
+    If a position was occupied at a previous timestep, then all the
+    positions that can be reached by enumerating the knight moves can
+    be occupied at the next time step.
+
+    @param solver: The solver instance to add constraints to.
+    @param M: The number of rows in the chessboard.
+    @param N: The number of columns in the chessboard.
+    @param T: The number of timesteps.
+    @param var: A dictionary containing all the variables.
+    """
+
+    # Forward constraints.
     for t in range(T - 1):
         for i in range(M):
             for j in range(N):
+
                 v = var[(i, j, t)]
-                #print(f"!{v} ({i}, {j}| {t})")
                 move_lits = []
+
                 for di, dj in KNIGHT_MOVES:
                     ni, nj = i + di, j + dj
-                    # Check move leads inside the chessboard
                     if valid_pos(ni, nj, M, N):
                         move_lits.append(var[(ni, nj, t + 1)])
-                        #print(f"Appending ({ni}, {nj}| {t + 1})")
+
                 if move_lits:
                     # v => legal moves <=> not v and (ORing legal_moves)
-                    #print(f"move_lits ", move_lits)
                     solver.add_clause([-v] + move_lits)
                 else:
                     solver.add_clause([-v])
@@ -43,12 +45,15 @@ def add_legal_moves_constraints(solver, M, N, T, var):
     for t in range(T - 1):
         for i in range(M):
             for j in range(N):
+
                 v = var[(i, j, t + 1)]
                 prev_lits = []
+
                 for di, dj in KNIGHT_MOVES:
                     pi, pj = i - di, j - dj
                     if valid_pos(pi, pj, M, N):
                         prev_lits.append(var[(pi, pj, t)])
+
                 if prev_lits:
                     # If at (i,j) at t+1, must come from a legal position at t
                     solver.add_clause([-v] + prev_lits)
@@ -58,51 +63,48 @@ def add_legal_moves_constraints(solver, M, N, T, var):
     
     return solver, var
 
+def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: dict):
+    """Adds constraints enforcing that at each timestep, we visit a single 
+    cell.
 
-"""
-This function adds constraints to the SAT solver that enforce
-only one cell to be visited at each timestep, and a given cell
-is visited at only one timestep.
-This function is naive and will compute a quadratic number
-of clauses to exlude two cells from being visited at the same
-time step.
+    This function uses a naive, quadratic number of clauses to exlude
+    two cells from being visited at the same time step.
 
-@param solver: The solver instance to add constraints to.
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param T: The number of timesteps.
-@param var: A dictionary containing all the variables.
-"""
-def add_cell_constraints_naive(solver, M, N, T, var):
-    # Each timestep visits a single cell
+    @param solver: The solver instance to add constraints to.
+    @param M: Chessboard rows number.
+    @param N: Chessboard cols number.
+    @param T: Total timesteps.
+    @param var: A dictionary containing all the variables.
+    """
+    
     for t in range(T):
         # Any cell in a snapshot can be visited at each time step
         lits = [var[(i, j, t)] for i in range(M) for j in range(N)]
         solver.add_clause(lits)
+
         # Two cells cannot be visited in a same snapshot
         # Take all different combinations of cells of a given snapshot
         for first_cell in range(len(lits)):
             for second_cell in range(first_cell + 1, len(lits)):
                 # not(A and B) <=> (not A or not b)
                 solver.add_clause([-lits[first_cell], -lits[second_cell]])
+
     return solver, var
 
-"""
-This function adds constraints to the SAT solver that enforce
-only one cell to be visited at each timestep, and a given cell
-is visited at only one timestep.
-This function is naive and will compute a quadratic number
-of clauses to exlude two cells from being visited at the same
-time step.
-
-@param solver: The solver instance to add constraints to.
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param T: The number of timesteps.
-@param var: A dictionary containing all the variables.
-"""
 def add_time_constraints_naive(solver, M, N, T, var):
-    # A given cell is visited at exactly one time step
+    """Adds constraints enforcing a given cell is visited at exactly 
+    one time step.
+
+    This function uses a naive, quadratic number of clauses to exlude
+    two cells from being visited at the same time step.
+
+    @param solver: The solver instance to add constraints to.
+    @param M: The number of rows in the chessboard.
+    @param N: The number of columns in the chessboard.
+    @param T: The number of timesteps.
+    @param var: A dictionary containing all the variables.
+    """
+
     for i in range(M):
         for j in range(N):
             # There must be at least one timestep for visiting the cell
@@ -116,21 +118,21 @@ def add_time_constraints_naive(solver, M, N, T, var):
     
     return solver, var
 
-
-"""
-This function adds constraints to the SAT solver that enforce
-only one cell to be visited at each timestep.
-This function is more efficient as it uses sequential counter
-encoding, which adds a set of clauses linear w.r.t. the size
-of the problem.
-
-@param solver: The solver instance to add constraints to.
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param T: The number of timesteps.
-@param var: A dictionary containing all the variables.
-"""
 def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
+    """Adds constraints enforcing that at each timestep, we visit a single 
+    cell.
+
+    This function is more efficient as it uses sequential counter
+    encoding, which adds a set of clauses linear w.r.t. the size
+    of the problem.
+
+    @param solver: The solver instance to add constraints to.
+    @param M: The number of rows in the chessboard.
+    @param N: The number of columns in the chessboard.
+    @param T: The number of timesteps.
+    @param var: A dictionary containing all the variables.
+    """
+
     #print(f"add_cell_constraints_sequential_counter({solver}, {M}, {N}, {T}, {var}, {var_id}):")
     for t in range(T):
         # List of literals for all cells at time t
@@ -167,20 +169,17 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
         
     return solver, var, var_id
 
-"""
-This function adds constraints to the SAT solver that enforce
-cells are visited only at one timestep.
-This function is more efficient as it uses sequential counter
-encoding, which adds a set of clauses linear w.r.t. the size
-of the problem.
-
-@param solver: The solver instance to add constraints to.
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param T: The number of timesteps.
-@param var: A dictionary containing all the variables.
-"""
 def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
+    """Adds constraints enforcing a given cell is visited at exactly 
+    one time step.
+
+    @param solver: The solver instance to add constraints to.
+    @param M: The number of rows in the chessboard.
+    @param N: The number of columns in the chessboard.
+    @param T: The number of timesteps.
+    @param var: A dictionary containing all the variables.
+    """
+
     for i in range(M):
         for j in range(N):
             # List of literals for cell (i, j) across all time steps

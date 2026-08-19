@@ -48,50 +48,46 @@ def model_to_solution(model, M, N, T, var):
                     break
     return solution
 
-"""
-This function will solve the Knight's Tour problem.
 
-@param M: The number of rows in the chessboard.
-@param N: The number of columns in the chessboard.
-@param i0: The start row (0-indexed)
-@param j0: The start column (0-indexed)
-@param mode: Whether to use naive or efficient constraints.
-"""
 def build_knight_tour(M, N, i0, j0, mode='n'):
-    #print(f"solve_knight_tour: {M}x{N}@({i0}, {j0}) in {mode} mode")
+    """
+    This function will solve the Knight's Tour problem.
+
+    @param M: The number of rows in the chessboard.
+    @param N: The number of columns in the chessboard.
+    @param i0: The start row (0-indexed)
+    @param j0: The start column (0-indexed)
+    @param mode: Whether to use naive or efficient constraints.
+    """
+
     solver = Glucose3()
-    
-    T = M * N  # Number of timesteps
-    var = {}  # (i,j,t) -> variable id
-    var_id = 1
+    T = M * N
+    vars = {}  # Dict(i, j, t) -> variable id
 
     # Populating dict for each i, j, timestep
+    var_id = 1
     for t in range(T):
         for i in range(M):
             for j in range(N):
-                var[(i, j, t)] = var_id
+                vars[(i, j, t)] = var_id
                 var_id += 1
 
-    # Adding the start position clause
-    solver.add_clause([var[(i0, j0, 0)]])
-
+    solver.add_clause([vars[(i0, j0, 0)]])
     if (mode == 'n'):
-        _, _ = add_cell_constraints_naive(solver, M, N, T, var)
-        _, _ = add_time_constraints_naive(solver, M, N, T, var)
+        _, _ = add_cell_constraints_naive(solver, M, N, T, vars)
+        _, _ = add_time_constraints_naive(solver, M, N, T, vars)
     elif (mode == 'sc'):
-        _, _, var_id = add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id)
-        _, _, var_id = add_time_constraints_sequential_counter(solver, M, N, T, var, var_id)
+        _, _, var_id = add_cell_constraints_sequential_counter(solver, M, N, T, vars, var_id)
+        _, _, var_id = add_time_constraints_sequential_counter(solver, M, N, T, vars, var_id)
+    add_legal_moves_constraints(solver, M, N, T, vars)
 
-    add_legal_moves_constraints(solver, M, N, T, var)
+    return solver, vars
 
-    return solver, var
-
-
-"""
-Builds the knight tour problem with additional specified constraints 
-and solves it, returning all solutions.
-"""
 def solve_with_constraints(extra_constraints, M, N, i0, j0):
+    """ Builds the knight tour problem with additional specified constraints 
+    and solves it, returning all solutions.
+    """
+    
     T = M * N
 
     solver, vars = build_knight_tour(M, N, i0, j0, mode='sc')
@@ -102,14 +98,16 @@ def solve_with_constraints(extra_constraints, M, N, i0, j0):
     sols, _ = extract_all_solutions(solver, M, N, T, vars)
     return sols
 
-"""
-Computes the strictly necessary set of constraints to ensure 
-the problem has only one solution. Adding these constraints
-to the SAT solver will ensure only one solution. Add a strictly 
-smaller subset of them to the SAT solver will make it output
-several solutions.
-"""
+
 def get_uniqueness_constraints(M, N, i0, j0):
+    """Computes the strictly necessary set of constraints to ensure 
+    the problem has only one solution. 
+    
+    Adding these constraints to the SAT solver will ensure only one solution. 
+    Add a strictly smaller subset of them to the SAT solver will make it output
+    several solutions.
+    """
+
     random.seed()  # to ensure outputs fairness
 
     T = M * N

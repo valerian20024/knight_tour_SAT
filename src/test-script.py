@@ -28,8 +28,7 @@ def timing_test_script():
 
         return start, end, res
 
-    M = [0, 1, 2, 3, 4, 5, 6]
-    N = M
+    M = N = [0, 1, 2, 3, 4, 5, 6]
 
     for m in M:
         for n in N:
@@ -85,9 +84,6 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
         print(f"{sol} {hash(str(sol))}")
 
     print(f"number of solutions FULL ADDITIONAL CONSTRAINTS : {len(constraints_solutions)}")
-
-
-
 
     print("=" * 30 + "\nTEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS\n" + "=" * 30)
     subsets = leave_one_out_subsets(constraints)

@@ -4,22 +4,8 @@ from plot import rainbow_plot
 from helpers import leave_one_out_subsets
 
 def question1(M, N, i0, j0):
-    """Solve the Knight's Tour problem.
-    
-    @param M:   Number of chessboard rows.
-    @param N:   Number of chessboard cols.
-    @param i0:  Knight's initial row (0-indexed).
-    @param j0:  Knight's initial col (0-indexed).
-
-    @return solution: 
-        solution[i][j] is the number of moves required to arrive in cell 
-        (i, j). If no solution is found, every cell value is set to -1.
-    @return solver: 
-        The instance of the solver used.
-    @return variables: 
-        The variables used.
-    """
     T = M * N
+
     solver, variables = build_knight_tour(M, N, i0, j0)
     solution, _ = extract_solution(solver, M, N, T, variables)
     
@@ -27,7 +13,6 @@ def question1(M, N, i0, j0):
 
 
 def question3():
-    """Computes the number of solutions for a given instance of the problem."""
     M = 3
     N = 4
     T = M * N
@@ -48,8 +33,6 @@ def question3():
     return nb_sol
 
 def question4():
-    """Counts the number of solutions up to symmetry."""
-
     M = 3
     N = 4
     T = M * N
@@ -72,16 +55,8 @@ def question4():
 
 
 def question5(M, N, i0, j0):
-    """Computes the constraints guaranteeing a unique solution. 
-
-    All constraints are necessary for uniqueness of the solution. 
-    They enforce the knight to visit a specific cell at a specific timestep.
-
-    @return constraints: Constraints are of the form [(t1, i1, j1), (t2, i2, j2), ...]. If the function is called with parameters such that
-    no solution exists, it returns an empty list.
-    """
-
     T = M * N
+    
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
     base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
 
