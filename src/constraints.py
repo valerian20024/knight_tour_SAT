@@ -64,7 +64,6 @@ def add_legal_moves_constraints(solver: Glucose3, M: int, N: int, var: dict):
     
     return solver, var
 
-#todo remove T as an argument, compute locally
 def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, var: dict):
     """Adds constraints enforcing that at each timestep, we visit a single 
     cell.

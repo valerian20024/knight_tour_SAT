@@ -1,31 +1,31 @@
 from plot import rainbow_plot
 
-"""Apply vertical axial symmetry: (i, j) -> (i, N-1-j)."""
-def vertical_symmetry(solution, M, N):
+def vertical_symmetry(solution, M, N) -> list[list[int]]:
+    """Apply vertical axial symmetry: (i, j) -> (i, N-1-j)."""
     new_solution = [[-1] * N for _ in range(M)]
     for i in range(M):
         for j in range(N):
             new_solution[i][N - 1 - j] = solution[i][j]
     return new_solution
 
-"""Apply a horizontal symmetry to a solution"""
-def horizontal_symmetry(solution, M, N):
+def horizontal_symmetry(solution, M, N) -> list[list[int]]:
+    """Apply an horizontal symmetry to a solution"""
     new_solution = [[-1] * N for _ in range(M)]
     for i in range(M):
         for j in range(N):
             new_solution[M - 1 - i][j] = solution[i][j]
     return new_solution
 
-"""Apply a central symmetry to a solution"""
-def central_symmetry(solution, M, N):
+def central_symmetry(solution, M, N) -> list[list[int]]:
+    """Apply a central symmetry to a solution"""
     new_solution = [[-1] * N for _ in range(M)]
     for i in range(M):
         for j in range(N):
             new_solution[M - 1 - i][N - 1 - j] = solution[i][j]
     return new_solution
 
-"""Checks if solution1 is equivalent to solution2 using any symmetry."""
-def are_equivalent(solution1, solution2, M, N):
+def are_equivalent(solution1, solution2, M, N) -> bool:
+    """Checks if solution1 is equivalent to solution2 using any symmetry."""
     if solution1 == solution2:
         return True
     if vertical_symmetry(solution2, M, N) == solution1:
@@ -36,8 +36,8 @@ def are_equivalent(solution1, solution2, M, N):
         return True
     return False
 
-"""Counts the number of distinct solutions up to symmetry."""
-def count_solutions_up_to_symmetry(solutions, M, N):
+def count_solutions_up_to_symmetry(solutions, M, N) -> int:
+    """Counts the number of distinct solutions up to symmetry."""
     if not solutions:
         return 0
 

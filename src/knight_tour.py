@@ -2,7 +2,6 @@ from pysat.solvers import Glucose3
 from constraints import *
 import random
 
-#todo return only solution, will deal with whether it's empty elsewhere
 def extract_solution(solver: Glucose3, M: int, N: int, T: int, var: dict):
     """Return one solution from the solver."""
     res = False
@@ -14,8 +13,7 @@ def extract_solution(solver: Glucose3, M: int, N: int, T: int, var: dict):
 
     return solution, res
 
-#todo merge with only extract one solution. Duplicated logic.
-def extract_all_solutions(solver, M, N, T, var):
+def extract_all_solutions(solver: Glucose3, M: int, N: int, T: int, var: dict):
     """Return all the solutions from the solver."""
     res = False
     solutions = []
