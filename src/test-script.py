@@ -5,25 +5,16 @@ from knight_tour import *
 from helpers import *
 from plot import *
 
-def timing_test_script():
+def timing_test_script() -> None:
     """ This script compares timing between many efficient and naive solutions."""
 
-    def test(M: int, N: int, i0: int, j0: int, mode: str):
+    def chrono(M: int, N: int, i0: int, j0: int, mode: str):
         """Tests the time it takes to find a solution."""
-        dir_path = f"figs/test/{mode}/{M}x{N}/"
-        filename = f"{i0}_{j0}"
-        path = dir_path + filename
-        os.makedirs(dir_path, exist_ok=True)
-
-        T = M * N
 
         start = time()
         solver, vars = build_knight_tour(M, N, i0, j0, mode)
-        solution, res = extract_solution(solver, M, N, T, vars)
+        solution, res = extract_solution(solver, M, N, vars)
         end = time()
-
-        #if res:
-            #rainbow_plot(solution, path)
 
         return start, end, res
 
@@ -35,8 +26,8 @@ def timing_test_script():
                 for i0 in range(m):
                     for j0 in range(n):
                         
-                        start_n, end_n, res_n = test(m, n, i0, j0, 'n')
-                        start_sc, end_sc, res_sc = test(m, n, i0, j0, 'sc')
+                        start_n, end_n, res_n = chrono(m, n, i0, j0, 'n')
+                        start_sc, end_sc, res_sc = chrono(m, n, i0, j0, 'sc')
                         
                         time_sc = end_sc - start_sc
                         time_n = end_n - start_n
@@ -54,7 +45,7 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
 
     T = M * N
     solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
-    base_solutions, _ = extract_all_solutions(solver_base, M, N, T, vars_base)
+    base_solutions, _ = extract_all_solutions(solver_base, M, N, vars_base)
 
     print("=" * 20 + "\nSOLUTIONS BASE\n" + "=" * 20)
 
@@ -71,7 +62,7 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
     """for c in constraints:
         solver_constrained.add_clause([vars_constrained[c]])
 
-    constraints_solutions, _ = extract_all_solutions(solver_constrained, M, N, T, vars_constrained)
+    constraints_solutions, _ = extract_all_solutions(solver_constrained, M, N, vars_constrained)
     """
 
     constraints_solutions = solve_with_constraints(constraints, M, N, i0, j0)
@@ -107,7 +98,7 @@ if __name__ == '__main__':
     #rainbow_plot(st.question1(8, 8, 0, 0)[0], DIR + "q2")
 
     # Question 3
-    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
     #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
@@ -118,4 +109,4 @@ if __name__ == '__main__':
     #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
 
     # Custom tests
-    timing_test_script()
+    #timing_test_script()

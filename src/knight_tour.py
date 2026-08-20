@@ -2,10 +2,13 @@ from pysat.solvers import Glucose3
 from constraints import *
 import random
 
-def extract_solution(solver: Glucose3, M: int, N: int, T: int, var: dict):
+def extract_solution(solver: Glucose3, M: int, N: int, var: dict):
     """Return one solution from the solver."""
+
+    T = M * N
     res = False
     solution = [[]]
+
     if solver.solve():
         res = True
         model = solver.get_model()  # list of all the variables
@@ -13,10 +16,13 @@ def extract_solution(solver: Glucose3, M: int, N: int, T: int, var: dict):
 
     return solution, res
 
-def extract_all_solutions(solver: Glucose3, M: int, N: int, T: int, var: dict):
+def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
     """Return all the solutions from the solver."""
+
+    T = M * N
     res = False
     solutions = []
+
     if solver.solve():
         res = True
         seen = set()
@@ -30,8 +36,9 @@ def extract_all_solutions(solver: Glucose3, M: int, N: int, T: int, var: dict):
 
     return solutions, res
 
-def model_to_solution(model, M, N, T, var):
+def model_to_solution(model, M, N, T, var) -> list[list]:
     """Helper function to convert a SAT model into a solution matrix."""
+
     solution = [[-1] * N for m in range(M)]  # N x M list filled with -1
     for index in range(T):
         for i in range(M):
@@ -45,7 +52,7 @@ def model_to_solution(model, M, N, T, var):
 
 
 def build_knight_tour(M, N, i0, j0, mode='n'):
-    """Orchestrator to solve the Knight's Tour problem.
+    """Orchestrator to build the Knight's Tour problem, adding constraints.
 
     @param M: The number of rows in the chessboard.
     @param N: The number of columns in the chessboard.
@@ -81,15 +88,13 @@ def solve_with_constraints(extra_constraints, M, N, i0, j0):
     """ Builds the knight tour problem with additional specified constraints 
     and solves it, returning all solutions.
     """
-    
-    T = M * N
 
     solver, vars = build_knight_tour(M, N, i0, j0, mode='sc')
     for ec in extra_constraints:
         lit = vars[ec]
         solver.add_clause([lit])
 
-    sols, _ = extract_all_solutions(solver, M, N, T, vars)
+    sols, _ = extract_all_solutions(solver, M, N, vars)
     return sols
 
 
@@ -103,10 +108,10 @@ def get_uniqueness_constraints(M, N, i0, j0):
     """
 
     random.seed()  # to ensure outputs fairness
-
     T = M * N
+    
     solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
-    solutions, has_sol = extract_all_solutions(solver, M, N, T, variables)
+    solutions, has_sol = extract_all_solutions(solver, M, N, variables)
 
     if not has_sol or len(solutions) <= 1:
         return []
