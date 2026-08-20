@@ -14,6 +14,7 @@ def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> list[list[i
     model = solver.get_model()  # list of all the variables
     return model_to_solution(model, M, N, var)
 
+# todo rewrite to get rid of the res return. Return an empty list.
 def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
     """Return all the solutions from the solver."""
 
@@ -96,27 +97,30 @@ def solve_with_constraints(extra_constraints, M, N, i0, j0):
     sols, _ = extract_all_solutions(solver, M, N, vars)
     return sols
 
-
-def get_uniqueness_constraints(M, N, i0, j0):
+#todo rename uniqueness constraints
+def get_uniqueness_constraints(M, N, i0, j0) -> list:
     """Computes the strictly necessary set of constraints to ensure 
-    the problem has only one solution. 
+    the problem has a unique solution. 
     
     Adding these constraints to the SAT solver will ensure only one solution. 
     Add a strictly smaller subset of them to the SAT solver will make it output
     several solutions.
+
+    @return constraints written as (t, i, j)
     """
 
-    random.seed()  # to ensure outputs fairness
+    random.seed()
     T = M * N
 
     solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
-    solutions, has_sol = extract_all_solutions(solver, M, N, variables)
+    solutions, _ = extract_all_solutions(solver, M, N, variables)
 
-    if not has_sol or len(solutions) <= 1:
+    # 0 or 1 solution is already unique
+    if len(solutions) <= 1:
         return []
 
-    # Build paths representing the knight's moves.
-    paths = set()  # keep unique paths to improve computation time
+    # Build paths: path[t] = (i,j) represents where the knight was at t
+    paths = set()
     for sol in solutions:
         path = [None] * T
         for i in range(M):
@@ -124,7 +128,7 @@ def get_uniqueness_constraints(M, N, i0, j0):
                 if sol[i][j] >= 0:
                     path[sol[i][j]] = (i, j)
         paths.add(tuple(path))
-    paths = tuple(paths)  # to be able to index it
+    paths = tuple(paths)
     
     # A reference path will be compared with alternative paths
     ref_path = random.choice(paths)
@@ -144,14 +148,12 @@ def get_uniqueness_constraints(M, N, i0, j0):
                 continue  # alt path unreachable given current constraints
             
             # Finding the constraint that can differentiate two paths.
-            # Constraints are indexed using t, i, j order because paths are
-            # inherently a set of t-indexed (i, j) pairs.
-            for t in range(1, T):  # every path starts at the same place at t = 0
+            # Constraints are indexed using t, i, j order
+            # Start at 1 since every path starts the same at t = 0
+            for t in range(1, T):  
                 if alt_path[t] != ref_path[t]:
                     i, j = ref_path[t]  # force the reference position
                     constraints.add((t, i, j))
                     break
 
-    # Swapping back to normal i, j, t indexing
-    constraints = [(i, j, t) for (t, i, j) in constraints]
-    return constraints
+    return list(constraints)

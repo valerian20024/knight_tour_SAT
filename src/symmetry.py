@@ -36,6 +36,7 @@ def are_equivalent(solution1, solution2, M, N) -> bool:
         return True
     return False
 
+#todo rename count up to symmetry
 def count_solutions_up_to_symmetry(solutions, M, N) -> int:
     """Counts the number of distinct solutions up to symmetry."""
     if not solutions:
