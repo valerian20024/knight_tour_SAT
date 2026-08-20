@@ -2,24 +2,21 @@ from pysat.solvers import Glucose3
 from constraints import *
 import random
 
-def extract_solution(solver: Glucose3, M: int, N: int, var: dict):
-    """Return one solution from the solver."""
+def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> list[list[int]]: 
+    """Return one solution from the solver.
+    
+    If no solutions, returns a -1 initialized list.
+    """
 
-    T = M * N
-    res = False
-    solution = [[]]
+    if not solver.solve():
+        return [[-1 for _ in range(N)] for _ in range(M)]
 
-    if solver.solve():
-        res = True
-        model = solver.get_model()  # list of all the variables
-        solution = model_to_solution(model, M, N, T, var)
-
-    return solution, res
+    model = solver.get_model()  # list of all the variables
+    return model_to_solution(model, M, N, var)
 
 def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
     """Return all the solutions from the solver."""
 
-    T = M * N
     res = False
     solutions = []
 
@@ -27,7 +24,7 @@ def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
         res = True
         seen = set()
         for model in solver.enum_models():  # list of all the variables
-            solution = model_to_solution(model, M, N, T, var)
+            solution = model_to_solution(model, M, N, var)
             # Convert to tuple of tuples for hashing
             sol_tuple = tuple(tuple(row) for row in solution)
             if sol_tuple not in seen:
@@ -36,10 +33,12 @@ def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
 
     return solutions, res
 
-def model_to_solution(model, M, N, T, var) -> list[list]:
+def model_to_solution(model, M, N, var) -> list[list]:
     """Helper function to convert a SAT model into a solution matrix."""
 
-    solution = [[-1] * N for m in range(M)]  # N x M list filled with -1
+    T = M * N
+
+    solution = [[-1 for _ in range(N)] for _ in range(M)]
     for index in range(T):
         for i in range(M):
             for j in range(N):
@@ -109,7 +108,7 @@ def get_uniqueness_constraints(M, N, i0, j0):
 
     random.seed()  # to ensure outputs fairness
     T = M * N
-    
+
     solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
     solutions, has_sol = extract_all_solutions(solver, M, N, variables)
 

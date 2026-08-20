@@ -8,12 +8,12 @@ from plot import *
 def timing_test_script() -> None:
     """ This script compares timing between many efficient and naive solutions."""
 
-    def chrono(M: int, N: int, i0: int, j0: int, mode: str):
+    def chrono(M: int, N: int, i0: int, j0: int, mode: str) -> tuple[float, float, list]:
         """Tests the time it takes to find a solution."""
 
         start = time()
         solver, vars = build_knight_tour(M, N, i0, j0, mode)
-        solution, res = extract_solution(solver, M, N, vars)
+        res = extract_solution(solver, M, N, vars)
         end = time()
 
         return start, end, res
@@ -93,12 +93,13 @@ if __name__ == '__main__':
     #rainbow_plot(st.question1(3, 7, 0, 0)[0], DIR + "q1") # there should be a solution
     #rainbow_plot(st.question1(7, 5, 3, 1)[0], DIR + "q1") # there should be a solution
     #rainbow_plot(st.question1(4, 4, 0, 0)[0], DIR + "q1") # there should not be a solution
+    #rainbow_plot(st.question1(2, 3, 0, 0)[0], DIR + "q1") # there should not be a solution
 
     # Question 2
     #rainbow_plot(st.question1(8, 8, 0, 0)[0], DIR + "q2")
 
     # Question 3
-    print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
+    #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
 
     # Question 4
     #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
@@ -109,4 +110,4 @@ if __name__ == '__main__':
     #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
 
     # Custom tests
-    #timing_test_script()
+    timing_test_script()
