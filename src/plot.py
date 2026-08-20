@@ -45,7 +45,7 @@ def rainbow_plot(solution, name="rainbow"):
     M, N = solution_array.shape
 
     if(M == 0 or N == 0):
-        print("Solution has a 0 dimension, no plotting it.")
+        print(f"Solution {name} has a 0 dimension, no plotting it.")
         return
 
     # Normalize step values for color mapping

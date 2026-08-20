@@ -70,12 +70,12 @@ def build_knight_tour(M, N, i0, j0, mode='n'):
 
     solver.add_clause([vars[(i0, j0, 0)]])
     if (mode == 'n'):
-        _, _ = add_cell_constraints_naive(solver, M, N, T, vars)
-        _, _ = add_time_constraints_naive(solver, M, N, T, vars)
+        _, _ = add_cell_constraints_naive(solver, M, N, vars)
+        _, _ = add_time_constraints_naive(solver, M, N, vars)
     elif (mode == 'sc'):
-        _, _, var_id = add_cell_constraints_sequential_counter(solver, M, N, T, vars, var_id)
-        _, _, var_id = add_time_constraints_sequential_counter(solver, M, N, T, vars, var_id)
-    add_legal_moves_constraints(solver, M, N, T, vars)
+        _, _, var_id = add_cell_constraints_sequential_counter(solver, M, N, vars, var_id)
+        _, _, var_id = add_time_constraints_sequential_counter(solver, M, N, vars, var_id)
+    add_legal_moves_constraints(solver, M, N, vars)
 
     return solver, vars
 

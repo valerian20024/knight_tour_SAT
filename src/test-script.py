@@ -22,8 +22,8 @@ def timing_test_script():
         solution, res = extract_solution(solver, M, N, T, vars)
         end = time()
 
-        if res:
-            rainbow_plot(solution, path)
+        #if res:
+            #rainbow_plot(solution, path)
 
         return start, end, res
 
@@ -42,8 +42,8 @@ def timing_test_script():
                         time_n = end_n - start_n
                         
                         print(f"Test {m}x{n}@({i0},{j0})")
-                        print(f"  sc: {time_sc}, {res_sc}")
-                        print(f"  n : {time_n}, {res_n}")
+                        print(f"  sc: {time_sc:.3}, {res_sc}")
+                        print(f"  n : {time_n:.3}, {res_n}")
 
 
 def uniqueness_constraints_test_script(M, N, i0, j0):
@@ -61,9 +61,6 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
     for sol in base_solutions:
         print(f"  {sol}")
     print(f"  => number of solutions BASE : {len(base_solutions)}")
-
-
-
 
     print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
 
@@ -101,13 +98,13 @@ if __name__ == '__main__':
     DIR = "figs/manual/"
 
     # Question 1
-    rainbow_plot(st.question1(5, 5, 0, 0)[0], DIR + "first") # there should be a solution
-    rainbow_plot(st.question1(3, 7, 0, 0)[0], DIR + "second") # there should be a solution
-    rainbow_plot(st.question1(7, 5, 3, 1)[0], DIR + "third") # there should be a solution
-    rainbow_plot(st.question1(4, 4, 0, 0)[0], DIR + "fourth") # there should not be a solution
+    #rainbow_plot(st.question1(5, 5, 0, 0)[0], DIR + "q1") # there should be a solution
+    #rainbow_plot(st.question1(3, 7, 0, 0)[0], DIR + "q1") # there should be a solution
+    #rainbow_plot(st.question1(7, 5, 3, 1)[0], DIR + "q1") # there should be a solution
+    #rainbow_plot(st.question1(4, 4, 0, 0)[0], DIR + "q1") # there should not be a solution
 
     # Question 2
-    #rainbow_plot(st.question1(8, 8, 0, 0)[0])
+    #rainbow_plot(st.question1(8, 8, 0, 0)[0], DIR + "q2")
 
     # Question 3
     #print("Number of solutions for a 3x4 chessboard: " + str(st.question3()))
@@ -119,3 +116,6 @@ if __name__ == '__main__':
     #print(st.question5(4, 4, 0, 0)) # should be the empty list
     #print(st.question5(3, 4, 1, 3))
     #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
+
+    # Custom tests
+    timing_test_script()

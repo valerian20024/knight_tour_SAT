@@ -6,7 +6,7 @@ from helpers import leave_one_out_subsets
 def question1(M, N, i0, j0):
     T = M * N
 
-    solver, variables = build_knight_tour(M, N, i0, j0)
+    solver, variables = build_knight_tour(M, N, i0, j0, "sc")
     solution, _ = extract_solution(solver, M, N, T, variables)
     
     return solution, solver, list(variables.values())

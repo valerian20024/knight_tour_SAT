@@ -7,8 +7,7 @@ KNIGHT_MOVES = ((-2, -1), (-2, 1),
                 ( 1, -2), ( 1, 2),
                 ( 2, -1), ( 2, 1))
 
-#todo remove T as an argument, compute locally
-def add_legal_moves_constraints(solver, M, N, T, var):
+def add_legal_moves_constraints(solver: Glucose3, M: int, N: int, var: dict):
     """This function adds constraints to the SAT solver that enforce
     the possible moves of the knight. 
     
@@ -19,9 +18,10 @@ def add_legal_moves_constraints(solver, M, N, T, var):
     @param solver: The solver instance to add constraints to.
     @param M: The number of rows in the chessboard.
     @param N: The number of columns in the chessboard.
-    @param T: The number of timesteps.
     @param var: A dictionary containing all the variables.
     """
+
+    T = M * N
 
     # Forward constraints.
     for t in range(T - 1):
@@ -65,7 +65,7 @@ def add_legal_moves_constraints(solver, M, N, T, var):
     return solver, var
 
 #todo remove T as an argument, compute locally
-def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: dict):
+def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, var: dict):
     """Adds constraints enforcing that at each timestep, we visit a single 
     cell.
 
@@ -78,6 +78,8 @@ def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: di
     @param T: Total timesteps.
     @param var: A dictionary containing all the variables.
     """
+
+    T = M * N
     
     for t in range(T):
         # Any cell in a snapshot can be visited at each time step
@@ -93,8 +95,7 @@ def add_cell_constraints_naive(solver: Glucose3, M: int, N: int, T: int, var: di
 
     return solver, var
 
-#todo remove T as an argument, compute locally
-def add_time_constraints_naive(solver, M, N, T, var):
+def add_time_constraints_naive(solver, M, N, var):
     """Adds constraints enforcing a given cell is visited at exactly 
     one time step.
 
@@ -107,6 +108,8 @@ def add_time_constraints_naive(solver, M, N, T, var):
     @param T: The number of timesteps.
     @param var: A dictionary containing all the variables.
     """
+
+    T = M * N
 
     for i in range(M):
         for j in range(N):
@@ -121,8 +124,7 @@ def add_time_constraints_naive(solver, M, N, T, var):
     
     return solver, var
 
-#todo remove T as an argument, compute locally
-def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
+def add_cell_constraints_sequential_counter(solver, M, N, var, var_id):
     """Adds constraints enforcing that at each timestep, we visit a single 
     cell.
 
@@ -136,6 +138,8 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
     @param T: The number of timesteps.
     @param var: A dictionary containing all the variables.
     """
+
+    T = M * N
 
     #print(f"add_cell_constraints_sequential_counter({solver}, {M}, {N}, {T}, {var}, {var_id}):")
     for t in range(T):
@@ -173,8 +177,7 @@ def add_cell_constraints_sequential_counter(solver, M, N, T, var, var_id):
         
     return solver, var, var_id
 
-#todo remove T as an argument, compute locally
-def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
+def add_time_constraints_sequential_counter(solver, M, N, var, var_id):
     """Adds constraints enforcing a given cell is visited at exactly 
     one time step.
 
@@ -184,6 +187,8 @@ def add_time_constraints_sequential_counter(solver, M, N, T, var, var_id):
     @param T: The number of timesteps.
     @param var: A dictionary containing all the variables.
     """
+
+    T = M * N
 
     for i in range(M):
         for j in range(N):
