@@ -8,9 +8,9 @@
 
 \hypersetup{
     colorlinks=true,
-    linkcolor=purple,
+    linkcolor=blue,
     urlcolor=blue,
-    citecolor=purple
+    citecolor=blue
 }
 
 \title{knight_tour_SAT}
@@ -56,8 +56,8 @@
 
 This report describes the way each question of the project has been solved as well as the results obtained. The projet repository is available on \href{https://github.com/valerian20024/knight_tour_SAT}{Github}.
 
-\section{Naive solution}
-Let $M$ and $N$ be the dimensions of the board and $T = M \cdot N$ the total number of moves.
+\section{Naive solution} \label{sec: naive_solution}
+Let $M$ and $N$ be the dimensions of the board and $T = M \times N$ the total number of moves.
 For every cell $(i,j)$, ($0 \leq i < M$, $0 \leq j < N$) and every time step $t$ ($0 \leq t < T$)
 we introduce a Boolean variable $x_{i,j,t}$ representing whether the knight occupies position $(i, j)$ at timestep $t$.
 
@@ -84,7 +84,7 @@ Similarly to the timestep constraints, these rules enforce that the knight occup
 \end{equation}
 
 \paragraph{Legal moves} 
-The rules of chess constrain the knight's transitions between timesteps. From a cell $(i, j)$ at timestep $t$, a knight moves in an ``L-shape'' to one of up to eight valid board positions at timestep $t+1$. We thus enforce the knight reaches one of these destinations. Let $L(i, j)$ denote the set of legal destination cells reachable from $(i, j)$. Formally,
+The rules of chess constrain the knight's transitions between timesteps. From a cell $(i, j)$ at timestep $t$, a knight moves in an ``L-shape'' to one of up to eight valid board positions at timestep $t+1$. We thus enforce the knight reaches one of these destinations. Let $L(i, j)$ denote the set of legal destination cells reachable from $(i, j)$~\footnote{In practice, this set is reduced by taking into account that $(i', j')$ must be inside the board. To alleviate notations, we have not specified it in the formulation.}. Formally,
 
 \begin{equation}
     \begin{aligned}
@@ -93,62 +93,53 @@ The rules of chess constrain the knight's transitions between timesteps. From a 
     \end{aligned}
 \end{equation}
 
-To improve unit propagation in the SAT solver, we can additionally enforce the converse constraints. That is, if a cell $(i', j')$ is occupied at timestep $t+1$, the knight must have arrived from a valid preceding cell at timestep $t$. Let $L'(i', j')$ denote the set of legal origin cells that can reach $(i', j')$. Formally, 
+We can additionally enforce the converse constraints. That is, if a cell $(i', j')$ is occupied at timestep $t+1$, the knight must have arrived from a valid preceding cell at timestep $t$. Let $L'(i', j')$ denote the set of legal origin cells that can reach $(i', j')$. Formally, 
 
 \begin{equation}
     \begin{aligned}
-    \forall t \in [0, T-2], ; \forall (i', j') : \quad & x_{i',j',t+1} \implies \left( \bigvee_{(i, j) \in L'(i',j')} x_{i,j,t} \right) \\
+    \forall t \in [0, T-2], \; \forall (i', j') : \quad & x_{i',j',t+1} \implies \left( \bigvee_{(i, j) \in L'(i',j')} x_{i,j,t} \right) \\
     \equiv \quad & \neg x_{i',j',t+1} \vee \left( \bigvee_{(i, j) \in L'(i',j')} x_{i,j,t} \right)
     \end{aligned}
 \end{equation}
 
-
-%%%
-
-One can go even a step further to help the SAT solver by specifying the reverse constraints. 
-That is, if a given cell has been reached at $t + 1$, then the knight must have perform one of its legal moves at $t$ and thus it was standing on another cell at $t$. 
-Let $L'$ be the moves available to the knight at time $t + 1$.
-Formally, 
-
-\begin{equation}
-    \neg x_{i',j',t+1} \bigvee_{\text{$(i, j) \in L'$}} x_{i,j,t}
-\end{equation}
-
-Each set of constraints are implemented in dedicated functions in the code.
-
-Naive solutions\footnote{on a Intel~(R) Core~(TM) i7--8565U CPU @ 1.80GHz} is able to solve $8 \times 8$ board in about $1.5$ to $1.7$ [s], depending on the knight start position.
-It can also solve up to $13 \times 13$ boards in less than $10$ [s] but gets overwhelmed when reaching $15 \times 15$ boards (it takes more than a minute to find the solution)
+\paragraph{Results}
+All the tests we have performed use the midrange CPU: Intel~(R) Core~(TM) i7--8565U 1.80GHz. The naive solution is able to solve $8 \times 8$ board in $\simeq 1.7$ [s]. It can also solve up to $13 \times 13$ boards in less than $10$ [s] but gets overwhelmed when reaching $15 \times 15$ boards, taking more than a minute to find the solution.
 
 \section{Efficient solution}
-While the naive approach can solve decently sized chessboard in reasonable time on a mid-range laptop, it must use a quadratic number of clauses for encoding the ``exactly one'' family of clauses.
-A more efficient solution would benefit from having less clauses for reducing the search space of the solver.
-After doing some research about different encodings for the ``at-most-one'' family of constraints (refined to ``exactly one'' in this problem), the sequential counter encoding seemed to be one of the most effective (yet simple enough)~\cite{holldobler2013efficient}.
-The sequential counter works by assigning a set of new, \textit{auxiliary variables} $a_k$ for $k \in [0, n]$, whose size grows \textit{linearly} with the size of the problem. These variables act as a chain that tracks whether a solution has been found previously. If it is the case, then the solver should know it cannot find any more solution. It will thus propagate the information through the $a_k$ instead of enumerating all pairwise possibilities. 
+\paragraph{Sequential encoding}
+While the naive approach solves decently sized chessboards in reasonable time, it uses a quadratic number of clauses for encoding the ``exactly one'' constraints.
+To reduce clause count and search space overhead, alternative encodings can be used. Among linear ``at-most-one'' encodings, the sequential counter encoding offers an good balance between simplicity and efficiency~\cite{holldobler2013efficient}.
 
-Formally, abstracting away the positions and time steps for a simpler mono-indexed set of variables, the key clauses are: 
+The sequential counter introduces $n-1$ new auxiliary variables $a_k$ for a set of $n$ Boolean variables $x_0, \dots, x_{n-1}$. These auxiliary variables form a cumulative chain tracking whether any variable prior to index $k$ has been set to true. Once an indicator $x_k$ is true, the chain propagates this information forward to forbid any subsequent variable $x_m$ ($m > k$) from being true. In the following, we alleviate notations to abstract away board positions and timesteps, thus considering $x_k$ instead of $x_{i, j, t}$. The encoding is defined as:
+
 \begin{align}
-    &\bigvee_{i} x_i                     & \text{There is at least one solution.}\\
-    \neg x_k &\lor a_k,                  & \text{A solution triggers the $a$, for $k \in [0; n - 2]$ }\\
-    \neg a_{k-1} &\lor a_k,              & \text{Propagating the information through the $a_k$'s.}\\
-    \neg x_k &\lor \neg a_{k-1},         & \text{A new solution requires no previous solution.}\\
+    \bigvee_{i=0}^{n-1} x_i && \text{At least one.} \\
+    \neg x_k \lor a_k && \text{for } k \in [0, n-2] \\
+    \neg a_{k-1} \lor a_k && \text{for } k \in [1, n-2] \\
+    \neg x_k \lor \neg a_{k-1} && \text{for } k \in [1, n-1]
 \end{align}
 
-This technique can be applied to both the one cell only and one time step only constraints. 
+This encoding can be applied to both the single-cell and single-timestep constraints discussed in Section \ref{sec: naive_solution}. 
 
-However, it appears that the sequential counter encoding is not always better than the pairwise encoding, as reported by~\cite{MarquesSilvaLynce07}. It has actually a high variance depending on the problem instance. It is sometimes better, sometimes worse than pairwise encoding. This can be solved by implementing a more clever version of the sequential encoding, which always beats the pairwise encoding. However, as the naive approach was sufficient for the scope of the project, sequential encoding has not been developed further. 
+For example, applying it to the single-cell (per timestep) constraint would yield the following, conceptually. For a fixed timestep $t$, we flatten the board grid into a 1D sequence of length $n = M \times N$. Then, we introduce $n - 1$ auxiliary variables $a_{k, t}$ for this specific timestep $t$. Once a cell is occupied by the knight, the chain will forward this information and prevent the solver from putting the knight on any other cell on the board at time step $t$. The application to the single-timestep constraint follows the same principle.
 
-\section{Counting solutions}
-In order to count all solutions for a given board, one simply needs to enumerate all the models found by the SAT solver, for each couple $(i_0, j_0) \in M \times N$. Using the PySAT library, it is easy to do so by calling the \texttt{enum\_models} method after solving the problem and simply count them.
+\paragraph{Results}
+However, as shown by Marques-Silva and Lynce~\cite{MarquesSilvaLynce07} (p. 11) on benchmark problems like the $N$-Queens problem, sequential counter encoding is not universally superior to pairwise encoding. While it reduces the theoretical clause complexity, it introduces significant runtime variance across problem instances. On smaller boards, sequential counter encoding often underperforms compared to the pairwise approach due to the overhead of auxiliary variables and slower unit propagation. Advanced variants of sequential encoding can mitigate these drawbacks, but since the naive pairwise formulation proved fast enough for our chessboard dimensions, we have not pursued further the sequential encoding variants.
 
+\section{Counting}
+\paragraph{Counting all solutions}
+To count all solutions for a given board size, we enumerate the models found by the SAT solver across every possible starting cell $(i_0, j_0) \in [0, M-1] \times [0, N-1]$. Using the \texttt{PySAT} library, this is achived by calling the \texttt{enum\_models()} method after initializing the problem solver.
 
-Solving the $3 \times 4$ chessboard takes about $1$ [s], finding $16$ solutions, while the $5 \times 5$ chessboard takes $2$ [s], finding $1728$ solutions. Comparing theses results with the ones showed in~\cite{wikipedia_knights_tour}, one can see that it's the right number of solutions. Unfortunately, it will not be possible to dare solving for larger boards in reasonable time on this hardware.
+Solving a $3 \times 4$ chessboard requires approximately $1$ [s] and yields $16$ valid solutions, whereas a $5 \times 5$ board takes about $2\,s$ to find $1\,728$ solutions. These results match the exact solution counts reported in Wikipedia~\cite{wikipedia_knights_tour}.
 
-\section{Counting up to symmetry}
-The easiest way to count up to symmetry was to enumerate all the solutions, apply symmetries and check whether or not the solution is identical to another solution. This enumeration takes into account every possible solutions for every possible starting position for a given chessboard size, as for the previous counting technique. 
-While this might not be the most effective nor elegant solution, it was fast enough for solving boards up to $5 \times 5$ in a few seconds.
-Solving the $3 \times 4$ chessboard takes about $1,2$ [s], finding $12$ solutions, while the $5 \times 5$ chessboard takes $6.1$ [s], finding $1568$ solutions.
+\paragraph{Counting up to symmetry}
+The easiest way to count solutions up to symmetry was to enumerate all the solutions, apply symmetries (rotation and mirroing) in order to check whether a solution is identical to another one. As with the previous counting method, this process evaluates every possible starting cell for a given board size. 
+
+While this technique is not the most elegant nor computationally efficient approach, it remains fast enough for small grids, completing in just a few seconds for boards up to $5 \times 5$. Specifically, solving the $3 \times 4$ chessboard requires approximately $1.2$ [s] and yields $12$ unique solutions, whereas the $5 \times 5$ board takes $6.1$ [s] to identify $1,568$ unique solutions.
 
 \section{Finding additional constraints}
+
+\textcolor{red}{rewrite when the question is solved correctly}
 
 First we enumerate all tours that satisfy the basic encoding. 
 Each tour is converted into a path, i.e., a sequence of positions indexed by time step $t$, and duplicate paths are discarded.
