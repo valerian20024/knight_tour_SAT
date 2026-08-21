@@ -64,53 +64,6 @@ def exhaustive_plot() -> None:
                                 file_path = dir_path / f"plot_{m}x{n}_{i0}-{j0}_{mode}"
                                 rainbow_plot(solution, str(file_path))
 
-def uniqueness_constraints_test_script(M, N, i0, j0):
-    """ This script computes and verifies that contraints obtained
-    by question 5 allow to have unique solutions and that removing
-    one of them leads to several solutions.
-    """
-
-    T = M * N
-    solver_base, vars_base = build_knight_tour(M, N, i0, j0, mode='sc')
-    base_solutions, _ = extract_all_solutions(solver_base, M, N, vars_base)
-
-    print("=" * 20 + "\nSOLUTIONS BASE\n" + "=" * 20)
-
-    for sol in base_solutions:
-        print(f"  {sol}")
-    print(f"  => number of solutions BASE : {len(base_solutions)}")
-
-    print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
-
-    solver_constrained, vars_constrained = build_knight_tour(M, N, i0, j0, mode='sc')
-    constraints = uniqueness_constraints(M, N, i0, j0)
-    print(f"  constraints: {constraints}")
-
-    """for c in constraints:
-        solver_constrained.add_clause([vars_constrained[c]])
-
-    constraints_solutions, _ = extract_all_solutions(solver_constrained, M, N, vars_constrained)
-    """
-
-    constraints_solutions = solve_with_constraints(constraints, M, N, i0, j0)
-
-    for sol in constraints_solutions:
-        print(f"{sol} {hash(str(sol))}")
-
-    print(f"number of solutions FULL ADDITIONAL CONSTRAINTS : {len(constraints_solutions)}")
-
-    print("=" * 30 + "\nTEST 2: REMOVE ANY CONSTRAINT GIVE SEVERAL SOLS\n" + "=" * 30)
-    subsets = leave_one_out_subsets(constraints)
-    
-    print(f"subsets: {subsets}")
-    for subset in subsets:
-        print(f"  {subset}")
-        solutions = solve_with_constraints(subset, M, N, i0, j0)
-        print(f"  number of solutions with subset {subset} is {len(solutions)}")
-        for sol in solutions:
-            print(f"    solution: {sol} {hash(str(sol))}")
-
-
 if __name__ == '__main__':
 
     DIR = "figs/manual/"
@@ -132,10 +85,10 @@ if __name__ == '__main__':
     #print("Number of solutions for a 3x4 chessboard, up to symmetry: " + str(st.question4()))
 
     # Question 5
-    #print(st.question5(4, 4, 0, 0)) # should be the empty list
-    #print(st.question5(3, 4, 1, 3))
-    #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
+    print(st.question5(4, 4, 0, 0)) # should be the empty list
+    print(st.question5(3, 4, 1, 3))
+    print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
 
     # Custom tests
     #timing_test_script()
-    exhaustive_plot()
+    #exhaustive_plot()

@@ -1,6 +1,7 @@
 from pysat.solvers import Glucose3
 from constraints import *
 from helpers import solutions_to_paths, model_to_solution
+from plot import *
 import random
 
 def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> tuple[list[list[int]], bool]: 
@@ -127,5 +128,9 @@ def uniqueness_constraints(M, N, i0, j0) -> list:
                 i, j = ref_path[t]
                 constraints.add((t, i, j))
                 break
+
+    # Uncomment to see all solutions instances and 
+    # compare with the returned constraints.
+    #rainbow_plot_all(solutions, "test_uniqueness_constraints")
 
     return list(constraints)
