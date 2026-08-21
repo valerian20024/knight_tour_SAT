@@ -215,6 +215,7 @@ venv/
 .VSCodeCounter/
 
 # Latex
+doc/report/report.pdf
 *.aux
 *.fdb_latexmk
 *.fls
