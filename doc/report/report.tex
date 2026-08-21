@@ -54,12 +54,11 @@
 
 \section{Introduction}
 
-This report describes the way each question of the project has been solved as well as the results obtained. The projet repository is available on \href{https://github.com/valerian20024/knight_tour_SAT}{Github}.
+This report describes how each question of the project has been solved as well as the results obtained. The projet repository is available on \href{https://github.com/valerian20024/knight_tour_SAT}{Github}.
 
 \section{Naive solution} \label{sec: naive_solution}
 Let $M$ and $N$ be the dimensions of the board and $T = M \times N$ the total number of moves.
-For every cell $(i,j)$, ($0 \leq i < M$, $0 \leq j < N$) and every time step $t$ ($0 \leq t < T$)
-we introduce a Boolean variable $x_{i,j,t}$ representing whether the knight occupies position $(i, j)$ at timestep $t$.
+For every cell $(i,j)$, ($0 \leq i < M$, $0 \leq j < N$) and every time step $t$ ($0 \leq t < T$), we introduce a Boolean variable $x_{i,j,t}$ representing whether the knight occupies position $(i, j)$ at timestep $t$.
 
 The first attempt at solving the problem involves the following set of constraints.
 
@@ -103,7 +102,7 @@ We can additionally enforce the converse constraints. That is, if a cell $(i', j
 \end{equation}
 
 \paragraph{Results}
-All the tests we have performed use the midrange CPU: Intel~(R) Core~(TM) i7--8565U 1.80GHz. The naive solution is able to solve $8 \times 8$ board in $\simeq 1.7$ [s]. It can also solve up to $13 \times 13$ boards in less than $10$ [s] but gets overwhelmed when reaching $15 \times 15$ boards, taking more than a minute to find the solution.
+All the tests we have performed use the midrange CPU: Intel~(R) Core~(TM) i7--8565U 1.80GHz. The naive solution is able to solve $8 \times 8$ board in $\simeq 1.7$ s. It can also solve up to $13 \times 13$ boards in less than $10$ s but gets overwhelmed when reaching $15 \times 15$ boards, taking more than a minute to find the solution.
 
 \section{Efficient solution}
 \paragraph{Sequential encoding}
@@ -130,12 +129,12 @@ However, as shown by Marques-Silva and Lynce~\cite{MarquesSilvaLynce07} (p. 11) 
 \paragraph{Counting all solutions}
 To count all solutions for a given board size, we enumerate the models found by the SAT solver across every possible starting cell $(i_0, j_0) \in [0, M-1] \times [0, N-1]$. Using the \texttt{PySAT} library, this is achived by calling the \texttt{enum\_models()} method after initializing the problem solver.
 
-Solving a $3 \times 4$ chessboard requires approximately $1$ [s] and yields $16$ valid solutions, whereas a $5 \times 5$ board takes about $2\,s$ to find $1\,728$ solutions. These results match the exact solution counts reported in Wikipedia~\cite{wikipedia_knights_tour}.
+Solving a $3 \times 4$ chessboard requires approximately $1$ s and yields $16$ valid solutions, whereas a $5 \times 5$ board takes about $2$ s to find $1728$ solutions. These results match the exact solution counts reported in Wikipedia~\cite{wikipedia_knights_tour}.
 
 \paragraph{Counting up to symmetry}
 The easiest way to count solutions up to symmetry was to enumerate all the solutions, apply symmetries (rotation and mirroing) in order to check whether a solution is identical to another one. As with the previous counting method, this process evaluates every possible starting cell for a given board size. 
 
-While this technique is not the most elegant nor computationally efficient approach, it remains fast enough for small grids, completing in just a few seconds for boards up to $5 \times 5$. Specifically, solving the $3 \times 4$ chessboard requires approximately $1.2$ [s] and yields $12$ unique solutions, whereas the $5 \times 5$ board takes $6.1$ [s] to identify $1,568$ unique solutions.
+While this technique is not the most elegant nor computationally efficient approach, it remains fast enough for small grids, completing in just a few seconds for boards up to $5 \times 5$. Specifically, solving the $3 \times 4$ chessboard requires approximately $1.2$ s and yields $12$ unique solutions, whereas the $5 \times 5$ board takes $6.1$ s to identify $1568$ unique solutions.
 
 \section{Finding additional constraints}
 
