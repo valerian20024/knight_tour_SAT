@@ -9,12 +9,15 @@ from pathlib import Path
 def timing_test_script() -> None:
     """ This script compares timing between many efficient and naive solutions."""
 
-    def chrono(M: int, N: int, i0: int, j0: int, mode: str) -> tuple[float, float, list]:
-        """Tests the time it takes to find a solution."""
+    def chrono(M: int, N: int, i0: int, j0: int, mode: str) -> tuple[float, float, bool]:
+        """Tests the time it takes to find a solution.
+        
+        Returns the start and end time and whether a solution was found.
+        """
 
         start = time()
         solver, vars = build_knight_tour(M, N, i0, j0, mode)
-        res = extract_solution(solver, M, N, vars)
+        _, res = extract_solution(solver, M, N, vars)
         end = time()
 
         return start, end, res
@@ -38,13 +41,16 @@ def timing_test_script() -> None:
                         print(f"  n : {time_n:.3}, {res_n}")
 
 def exhaustive_plot() -> None:
-    M = N = range(0, 5)
+    """Plots a single solution (if it exist) from every combination of M, N, i0, j0 and mode.
+    
+    Saves its result in a dedicated folder under `./figs/auto/`.
+    """
+    M = N = range(0, 7)
     MODE = ["n", "sc"]
 
     for m in M:
-        for n in N:
+        for n in M:
             if m <= n:
-                # 1. Define and create the directory for the M x N board
                 dir_path = Path(f"figs/auto/plots_{m}x{n}")
                 dir_path.mkdir(parents=True, exist_ok=True)
 
@@ -52,13 +58,11 @@ def exhaustive_plot() -> None:
                     for j0 in range(n):
                         for mode in MODE:
                             solver, vars = build_knight_tour(m, n, i0, j0, mode)
-                            solution = extract_solution(solver, m, n, vars)
-                            
-                            file_path = dir_path / f"plot_{m}x{n}_{i0}-{j0}_{mode}"
-                            
-                            rainbow_plot(solution, str(file_path))
+                            solution, res = extract_solution(solver, m, n, vars)
 
-
+                            if res:
+                                file_path = dir_path / f"plot_{m}x{n}_{i0}-{j0}_{mode}"
+                                rainbow_plot(solution, str(file_path))
 
 def uniqueness_constraints_test_script(M, N, i0, j0):
     """ This script computes and verifies that contraints obtained

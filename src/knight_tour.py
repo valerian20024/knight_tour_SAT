@@ -3,19 +3,18 @@ from constraints import *
 from helpers import solutions_to_paths
 import random
 
-def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> list[list[int]]: 
+def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> tuple[list[list[int]], bool]: 
     """Return one solution from the solver.
     
     If no solutions, returns a -1 initialized list.
     """
 
     if not solver.solve():
-        return [[-1 for _ in range(N)] for _ in range(M)]
+        return [[-1 for _ in range(N)] for _ in range(M)], False
 
     model = solver.get_model()  # list of all the variables
-    return model_to_solution(model, M, N, var)
+    return model_to_solution(model, M, N, var), True
 
-# todo rewrite to get rid of the res return. Return an empty list.
 def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
     """Return all the solutions from the solver."""
 

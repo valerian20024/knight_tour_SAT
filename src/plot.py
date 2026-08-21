@@ -33,7 +33,7 @@ def plot_solution(solution):
     return
 
 
-def rainbow_plot(solution, name="rainbow"):
+def rainbow_plot(solution, name="rainbow") -> None:
     """This function plots a solution using a colormap that represents
     in a clear way the progression of the knight on the chessboard.
     It saves the illustration in a dedicated folder.
@@ -44,7 +44,7 @@ def rainbow_plot(solution, name="rainbow"):
     solution_array = np.array(solution)
     M, N = solution_array.shape
 
-    if(M == 0 or N == 0):
+    if M == 0 or N == 0:
         print(f"Solution {name} has a 0 dimension, no plotting it.")
         return
 
@@ -87,7 +87,10 @@ def rainbow_plot(solution, name="rainbow"):
             cell = chessboard[i, j]
             cell.set_height(1.0 / M)
             cell.set_width(1.0 / N)
-    pl.savefig(f"{name}_{M}x{N}.pdf")
+    
+    pl.savefig(f"{name}.pdf")
+    pl.close(fig)
+    return
 
 
 def rainbow_plot_all(solutions, name):
