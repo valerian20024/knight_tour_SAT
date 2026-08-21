@@ -1,5 +1,5 @@
 from knight_tour import *
-from symmetry import count_solutions_up_to_symmetry
+from symmetry import count_up_to_symmetry
 from plot import rainbow_plot
 from helpers import leave_one_out_subsets
 
@@ -31,7 +31,7 @@ def question4():
         for j0 in range(N):
             solver, variables = build_knight_tour(M, N, i0, j0, 'sc')
             solutions, _ = extract_all_solutions(solver, M, N, variables)
-            nb_sol += count_solutions_up_to_symmetry(solutions, M, N)
+            nb_sol += count_up_to_symmetry(solutions, M, N)
     
     return nb_sol
 

@@ -1,6 +1,6 @@
 from pysat.solvers import Glucose3
 from constraints import *
-from helpers import solutions_to_paths
+from helpers import solutions_to_paths, model_to_solution
 import random
 
 def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> tuple[list[list[int]], bool]: 
@@ -33,23 +33,6 @@ def extract_all_solutions(solver: Glucose3, M: int, N: int, var: dict):
                 solutions.append(solution)
 
     return solutions, res
-
-def model_to_solution(model, M, N, var) -> list[list]:
-    """Helper function to convert a SAT model into a solution matrix."""
-
-    T = M * N
-
-    solution = [[-1 for _ in range(N)] for _ in range(M)]
-    for index in range(T):
-        for i in range(M):
-            for j in range(N):
-                # model[] is 0-indexed while variables are 1-indexed
-                # Check var(123) => check model[122]
-                if model[var[(i, j, index)] - 1] > 0:   # positive literal
-                    solution[i][j] = index
-                    break
-    return solution
-
 
 def build_knight_tour(M, N, i0, j0, mode='n'):
     """Orchestrator to build the Knight's Tour problem, adding constraints.
