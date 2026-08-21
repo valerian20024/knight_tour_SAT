@@ -1,5 +1,6 @@
 from pysat.solvers import Glucose3
 from constraints import *
+from helpers import solutions_to_paths
 import random
 
 def extract_solution(solver: Glucose3, M: int, N: int, var: dict) -> list[list[int]]: 
@@ -63,7 +64,7 @@ def build_knight_tour(M, N, i0, j0, mode='n'):
 
     solver = Glucose3()
     T = M * N
-    vars = {}  # Dict(i, j, t) -> variable id
+    vars = {}  # (i, j, t) -> variable id
 
     # Populating dict for each i, j, timestep
     var_id = 1
@@ -97,63 +98,52 @@ def solve_with_constraints(extra_constraints, M, N, i0, j0):
     sols, _ = extract_all_solutions(solver, M, N, vars)
     return sols
 
-#todo rename uniqueness constraints
-def get_uniqueness_constraints(M, N, i0, j0) -> list:
-    """Computes the strictly necessary set of constraints to ensure 
-    the problem has a unique solution. 
+def uniqueness_constraints(M, N, i0, j0) -> list:
+    """Computes a minimal set of constraints that, once added to the
+    solver, leaves exactly one solution for the M x N Knight's Tour
+    starting at (i0, j0).
     
     Adding these constraints to the SAT solver will ensure only one solution. 
     Add a strictly smaller subset of them to the SAT solver will make it output
     several solutions.
 
-    @return constraints written as (t, i, j)
+    @return: constraints written as (t, i, j)
     """
 
     random.seed()
     T = M * N
 
     solver, variables = build_knight_tour(M, N, i0, j0, mode='sc')
-    solutions, _ = extract_all_solutions(solver, M, N, variables)
+    solutions, has_solution = extract_all_solutions(solver, M, N, variables)
 
     # 0 or 1 solution is already unique
-    if len(solutions) <= 1:
+    if not has_solution or len(solutions) <= 1:
         return []
 
     # Build paths: path[t] = (i,j) represents where the knight was at t
-    paths = set()
-    for sol in solutions:
-        path = [None] * T
-        for i in range(M):
-            for j in range(N):
-                if sol[i][j] >= 0:
-                    path[sol[i][j]] = (i, j)
-        paths.add(tuple(path))
-    paths = tuple(paths)
-    
-    # A reference path will be compared with alternative paths
+    paths = solutions_to_paths(solutions, M, N)
     ref_path = random.choice(paths)
-    constraints = set()
     
-    # Eliminate every alternative path. Output the constraint on i, j, t
-    # that will allow to only keep the reference path as solution.
+    constraints = set()  # (t, i, j) constraints
+    
     for alt_path in paths:
-        if alt_path is not ref_path:  # don't kill the chosen one
-            # Check whether this alternative already violates one of the constraints
-            blocked = False
-            for t, forced_i, forced_j in constraints:
-                if alt_path[t] != (forced_i, forced_j):
-                    blocked = True
-                    break
-            if blocked:
-                continue  # alt path unreachable given current constraints
-            
-            # Finding the constraint that can differentiate two paths.
-            # Constraints are indexed using t, i, j order
-            # Start at 1 since every path starts the same at t = 0
-            for t in range(1, T):  
-                if alt_path[t] != ref_path[t]:
-                    i, j = ref_path[t]  # force the reference position
-                    constraints.add((t, i, j))
-                    break
+        if alt_path is ref_path:
+            continue
+
+        # If a constraint gathered so far already contradicts alt_path,
+        # alt_path is already impossible: no new constraint is needed.
+        already_excluded = any(
+            alt_path[t] != (i, j) for (t, i, j) in constraints
+        )
+        if already_excluded:
+            continue
+        
+        # Otherwise, find the first point of divergence with ref_path.
+        # (t = 0 is skipped, since every path starts at the same cell)
+        for t in range(1, T):  
+            if alt_path[t] != ref_path[t]:
+                i, j = ref_path[t]
+                constraints.add((t, i, j))
+                break
 
     return list(constraints)

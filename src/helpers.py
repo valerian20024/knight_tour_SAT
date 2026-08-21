@@ -13,3 +13,29 @@ def leave_one_out_subsets(items) -> list[list]:
     # a subset is items from start to i[, and items from i + 1] to end.
     subsets = [items[:i] + items[i+1:] for i in range(len(items))]
     return subsets
+
+
+def solutions_to_paths(solutions, M, N) -> tuple:
+    """Converts solution matrices into path sequences and deduplicates them.
+ 
+    A solution matrix has solution[i][j] = t ("cell (i,j) is visited at
+    time t"). A path is the inverse view: path[t] = (i, j) ("at time t,
+    the knight is at (i,j)").
+ 
+    @param solutions: list of solution matrices.
+    @param M: number of rows.
+    @param N: number of columns.
+    @return: a tuple of unique paths (each path is a tuple of (i, j)
+             positions indexed by timestep).
+    """
+    T = M * N
+    paths = set()
+    for sol in solutions:
+        path = [None] * T
+        for i in range(M):
+            for j in range(N):
+                if sol[i][j] >= 0:
+                    path[sol[i][j]] = (i, j)
+        paths.add(tuple(path))
+    return tuple(paths)
+ 

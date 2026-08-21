@@ -4,6 +4,7 @@ import solution_template as st
 from knight_tour import *
 from helpers import *
 from plot import *
+from pathlib import Path
 
 def timing_test_script() -> None:
     """ This script compares timing between many efficient and naive solutions."""
@@ -18,11 +19,11 @@ def timing_test_script() -> None:
 
         return start, end, res
 
-    M = N = [0, 1, 2, 3, 4, 5, 6]
+    M = N = range(0, 7)
 
     for m in M:
         for n in N:
-            if m <= n:  # avoid to repeat 3x7 and 7x3 solutions
+            if m <= n:  # avoid to repeat MxN and NxM solutions
                 for i0 in range(m):
                     for j0 in range(n):
                         
@@ -35,6 +36,28 @@ def timing_test_script() -> None:
                         print(f"Test {m}x{n}@({i0},{j0})")
                         print(f"  sc: {time_sc:.3}, {res_sc}")
                         print(f"  n : {time_n:.3}, {res_n}")
+
+def exhaustive_plot() -> None:
+    M = N = range(0, 5)
+    MODE = ["n", "sc"]
+
+    for m in M:
+        for n in N:
+            if m <= n:
+                # 1. Define and create the directory for the M x N board
+                dir_path = Path(f"figs/auto/plots_{m}x{n}")
+                dir_path.mkdir(parents=True, exist_ok=True)
+
+                for i0 in range(m):
+                    for j0 in range(n):
+                        for mode in MODE:
+                            solver, vars = build_knight_tour(m, n, i0, j0, mode)
+                            solution = extract_solution(solver, m, n, vars)
+                            
+                            file_path = dir_path / f"plot_{m}x{n}_{i0}-{j0}_{mode}"
+                            
+                            rainbow_plot(solution, str(file_path))
+
 
 
 def uniqueness_constraints_test_script(M, N, i0, j0):
@@ -56,7 +79,7 @@ def uniqueness_constraints_test_script(M, N, i0, j0):
     print("=" * 30 + "\nTEST 1: ALL CONSTRAINTS REDUCE TO UNIQUE SOL\n" + "=" * 30)
 
     solver_constrained, vars_constrained = build_knight_tour(M, N, i0, j0, mode='sc')
-    constraints = get_uniqueness_constraints(M, N, i0, j0)
+    constraints = uniqueness_constraints(M, N, i0, j0)
     print(f"  constraints: {constraints}")
 
     """for c in constraints:
@@ -110,4 +133,5 @@ if __name__ == '__main__':
     #print(st.question5(3, 4, 1, 3)) # should not systematically give the same result as the previous call
 
     # Custom tests
-    timing_test_script()
+    #timing_test_script()
+    exhaustive_plot()

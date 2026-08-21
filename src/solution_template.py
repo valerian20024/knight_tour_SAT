@@ -36,4 +36,4 @@ def question4():
     return nb_sol
 
 def question5(M, N, i0, j0):
-    return get_uniqueness_constraints(M, N, i0, j0)
+    return uniqueness_constraints(M, N, i0, j0)
